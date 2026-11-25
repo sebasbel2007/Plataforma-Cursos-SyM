@@ -71,25 +71,19 @@ let _loaderBound = false;
 
 function initLoader() {
   const loader = document.getElementById('app-loader');
-  if (!loader) return;
-
-  if (_loaderBound) { _hideLoader(); return; }
+  if (loader) {
+    loader.remove();
+  }
+  if (_loaderBound) return;
   _loaderBound = true;
 
-  // Timeout de seguridad: si Firebase tarda más de 6s, quita el loader igual
-  const timeout = setTimeout(() => _hideLoader(), 6000);
-  window.clearTimeout(loader._spaTimeout);
-  loader._spaTimeout = timeout;
-
   onAuthStateChanged(auth, async (user) => {
-    clearTimeout(timeout);
     if (user) {
       const userData = await getUserData(user.uid);
       window.__currentUser = { uid: user.uid, email: user.email, ...userData };
     } else {
       window.__currentUser = null;
     }
-    _hideLoader();
   });
 }
 

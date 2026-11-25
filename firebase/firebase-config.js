@@ -16,7 +16,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+const analytics = (function(){ try { return getAnalytics(app); } catch(e) { console.warn('[Firebase] Analytics no disponible:', e.message); return null; } })();
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);

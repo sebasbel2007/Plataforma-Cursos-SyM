@@ -1,7 +1,7 @@
 /* File: plataforma cursos SyM/sw.js */
 'use strict';
 
-const CACHE_NAME = 'cursos-sym-v12';
+const CACHE_NAME = 'cursos-sym-v14';
 
 const PRECACHE = [
   '/',
@@ -47,6 +47,7 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith('/api/')) return;
 
+  // Navegaciones: siempre red primero, caché solo como respaldo offline.
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request)
@@ -60,17 +61,18 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Resto (JS, CSS, imágenes): siempre red primero para nunca servir
+  // archivos viejos; si falla (offline), se usa la caché.
   event.respondWith(
-    caches.match(request).then((cached) => {
-      if (cached) return cached;
-      return fetch(request).then((response) => {
+    fetch(request)
+      .then((response) => {
         if (response.ok &&
             (url.pathname.startsWith('/assets/') || url.pathname.startsWith('/img/'))) {
           const copy = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
         }
         return response;
-      });
-    })
+      })
+      .catch(() => caches.match(request))
   );
 });

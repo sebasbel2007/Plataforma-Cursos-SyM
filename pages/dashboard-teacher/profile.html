@@ -103,6 +103,8 @@ requireRole('teacher').then(({ user, userData }) => {
       btn.disabled = false;
     }
   });
+}).catch((err) => {
+  console.error('[profile] requireRole rejected:', err);
 });
 </script>
 </body>

@@ -50,7 +50,12 @@ app.use(cors());
 app.use(express.json());
 
 // ─── Archivos estáticos ───────────────────────────────────────
-app.use(express.static(path.join(__dirname)));
+// Sin caché del navegador en desarrollo: siempre pide los archivos frescos.
+app.use(express.static(path.join(__dirname), {
+  setHeaders: (res) => {
+    res.setHeader('Cache-Control', 'no-store, must-revalidate');
+  }
+}));
 
 // ─── Ayudante: borrar carpeta Cloudinary (imágenes + videos) ─
 async function deleteCloudinaryFolder(folder) {
@@ -228,8 +233,13 @@ app.post('/api/webhook', async (req, res) => {
   }
 });
 
-// ─── Fallback: todas las rutas sirven el index ────────────────
+// ─── Fallback: las rutas sin extensión sirven el index ────────
+// (los archivos con extensión que no existen devuelven 404 en vez de
+// responder index.html, que rompía silenciosamente los imports de JS)
 app.get('*', (req, res) => {
+  if (path.extname(req.path)) {
+    return res.status(404).type('text/plain').send('404 Not Found');
+  }
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 

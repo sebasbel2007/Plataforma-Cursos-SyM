@@ -111,10 +111,11 @@ function themeToggleHTML() {
 // ─── Shell (idempotente) ───────────────────────────────────────
 let _loaderBuilt = false;
 export function buildChrome() {
+  // Loader deshabilitado: la app muestra el contenido de inmediato sin overlay bloqueante.
   if (!_loaderBuilt && !document.getElementById('app-loader')) {
-    document.body.insertAdjacentHTML('afterbegin', loaderHTML());
-    _loaderBuilt = true;
+    // no-op: no se inserta el loader
   }
+  _loaderBuilt = true;
   if (!document.getElementById('cookie-banner')) {
     document.body.insertAdjacentHTML('afterbegin', cookieBannerHTML());
   }

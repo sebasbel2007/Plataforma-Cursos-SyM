@@ -36,17 +36,33 @@
 /* ─── Dashboard: sidebar como drawer desplegable ───────────── */
 #sidebar.app-drawer {
   width: min(var(--sidebar-width), 88vw);
-  transform: translateX(-100%);
-  visibility: hidden;
   z-index: 200;
   box-shadow: var(--shadow-lg);
   transition: transform 0.28s ease, visibility 0s linear 0.28s;
 }
 
-#sidebar.app-drawer.open {
-  transform: translateX(0);
-  visibility: visible;
-  transition: transform 0.28s ease, visibility 0s linear 0s;
+/* Desktop (≥1024px): siempre visible, sin transform, sin sombra */
+@media (min-width: 1024px) {
+  #sidebar.app-drawer {
+    transform: translateX(0);
+    visibility: visible;
+    box-shadow: none;
+    transition: none;
+  }
+}
+
+/* Mobile: oculto por defecto, visible con .open */
+@media (max-width: 1023px) {
+  #sidebar.app-drawer {
+    transform: translateX(-100%);
+    visibility: hidden;
+  }
+
+  #sidebar.app-drawer.open {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform 0.28s ease, visibility 0s linear 0s;
+  }
 }
 
 .app-drawer-overlay {
@@ -67,10 +83,17 @@
   pointer-events: auto;
 }
 
-/* El contenido de las dashboards ocupa todo el ancho (el sidebar es overlay) */
+/* El contenido de las dashboards: sin margen en mobile (el sidebar es overlay),
+   con margen en desktop (el sidebar queda fijo y visible) */
 #sidebar.app-drawer ~ .main-content {
   margin-left: 0;
   padding-top: 0;
+}
+
+@media (min-width: 1024px) {
+  #sidebar.app-drawer ~ .main-content {
+    margin-left: var(--sidebar-width);
+  }
 }
 
 .app-drawer-header {

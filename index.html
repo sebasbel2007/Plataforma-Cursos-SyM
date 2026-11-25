@@ -102,7 +102,7 @@
 <body>
 
 <!-- ─── Loader ─────────────────────────────────────────────── -->
-<div id="app-loader">
+<div id="app-loader" style="display:none !important;">
   <div class="loader-spinner"></div>
 </div>
 
@@ -432,8 +432,12 @@
   document.getElementById('search-input-desktop')?.addEventListener('input', filterCourses);
 
   // ─── Init ──────────────────────────────────────────────────
-  await loadCategories();
-  await loadCourses();
+  try {
+    await loadCategories();
+    await loadCourses();
+  } catch (err) {
+    console.error('[Landing] Error cargando categorías/cursos:', err);
+  }
 </script>
 
 </body>
