@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<!-- File: plataforma cursos SyM/pages/course/course-detail.html -->
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detalle del curso — Cursos SyM</title>
+  <link rel="stylesheet" href="../../assets/css/main.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  <link rel="stylesheet" href="../../assets/css/responsive.css" />
+</head>
+<body>
+
+<div class="main-content">
+
+<!-- ─── Contenido principal ─────────────────────────────────── -->
+<main style="max-width:1200px;margin:0 auto;padding:2.5rem 2rem 4rem;">
+
+  <!-- Estado de carga -->
+  <div id="detail-loading" style="display:flex;justify-content:center;padding:4rem;">
+    <div class="loader-spinner"></div>
+  </div>
+
+  <!-- Error -->
+  <div id="detail-error" class="hidden empty-state">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/>
+    </svg>
+    <p>Curso no encontrado.</p>
+    <a href="../../index.html" class="btn btn-primary" style="margin-top:1rem;">Volver al catálogo</a>
+  </div>
+
+  <!-- Contenido del curso -->
+  <div id="detail-content" class="hidden">
+
+    <!-- Banner preview admin -->
+    <div id="preview-banner" class="hidden" style="background:var(--warning-dim);border:1px solid var(--warning);color:var(--warning);border-radius:var(--radius-md);padding:.875rem 1.25rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem;font-size:.875rem;font-weight:600;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+      <span>Vista previa — curso en estado <span id="preview-status" style="text-transform:capitalize;"></span>. Solo visible para administradores.</span>
+    </div>
+
+    <!-- Banner curso archivado (alumno con acceso) -->
+    <div id="archived-banner" class="hidden" style="background:var(--warning-dim);border:1px solid var(--warning);color:var(--warning);border-radius:var(--radius-md);padding:.875rem 1.25rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem;font-size:.875rem;font-weight:600;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+      <span>Curso archivado: ya no está disponible para nuevos compradores, pero seguís teniendo acceso a tus clases.</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 360px;gap:2.5rem;align-items:start;" id="detail-grid">
+
+      <!-- Columna izquierda -->
+      <div>
+        <!-- Breadcrumb -->
+        <div style="display:flex;align-items:center;gap:.5rem;font-size:.8125rem;color:var(--text-muted);margin-bottom:1.25rem;">
+          <a href="../../index.html">Inicio</a>
+          <span>/</span>
+          <a href="../catalog/catalog.html">Catálogo</a>
+          <span>/</span>
+          <span id="breadcrumb-category" style="color:var(--accent);"></span>
+        </div>
+
+        <!-- Título y meta -->
+        <h1 id="course-title" style="font-size:1.75rem;margin-bottom:.75rem;"></h1>
+        <p id="course-subtitle" style="font-size:1rem;color:var(--text-secondary);margin-bottom:1.25rem;"></p>
+
+        <!-- Rating y stats -->
+        <div style="display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap;margin-bottom:1.5rem;">
+          <div style="display:flex;align-items:center;gap:.375rem;">
+            <span id="course-rating-stars" style="color:var(--warning);font-size:1rem;"></span>
+            <span id="course-rating-num" style="font-weight:700;font-size:.9rem;"></span>
+            <span id="course-rating-count" style="color:var(--text-muted);font-size:.8125rem;"></span>
+          </div>
+          <span style="color:var(--text-muted);font-size:.875rem;" id="course-students"></span>
+          <span style="color:var(--text-muted);font-size:.875rem;" id="course-modules-count"></span>
+        </div>
+
+        <!-- Profesor -->
+        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:2rem;">
+          <div class="user-avatar" style="width:40px;height:40px;font-size:1rem;">
+            <span id="teacher-initials"></span>
+          </div>
+          <div>
+            <div style="font-size:.8125rem;color:var(--text-muted);">Instructor</div>
+            <div style="font-weight:600;" id="teacher-name"></div>
+          </div>
+        </div>
+
+        <!-- Video promo -->
+        <div id="promo-video-wrap" class="hidden" style="margin-bottom:2rem;border-radius:var(--radius-lg);overflow:hidden;"></div>
+
+        <!-- Descripción -->
+        <div style="margin-bottom:2rem;">
+          <h3 style="margin-bottom:.875rem;">Descripción</h3>
+          <div id="course-description" style="color:var(--text-secondary);line-height:1.8;font-size:.9375rem;white-space:pre-line;"></div>
+        </div>
+
+        <!-- Lo que vas a aprender -->
+        <div id="outcomes-block" class="hidden" style="
+          background:var(--bg-card);border:1px solid var(--border);
+          border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:2rem;
+        ">
+          <h3 style="margin-bottom:1rem;">Lo que vas a aprender</h3>
+          <ul id="outcomes-list" style="display:grid;grid-template-columns:1fr 1fr;gap:.625rem;"></ul>
+        </div>
+
+        <!-- Requisitos -->
+        <div id="requirements-block" class="hidden" style="margin-bottom:2rem;">
+          <h3 style="margin-bottom:.875rem;">Requisitos</h3>
+          <ul id="requirements-list" style="display:flex;flex-direction:column;gap:.5rem;"></ul>
+        </div>
+
+        <!-- Temario -->
+        <div style="margin-bottom:2rem;">
+          <h3 style="margin-bottom:1rem;">Temario</h3>
+          <div id="modules-list" style="display:flex;flex-direction:column;gap:.5rem;"></div>
+        </div>
+
+        <!-- Reseñas -->
+        <div id="reviews-block">
+          <h3 style="margin-bottom:1rem;">Reseñas</h3>
+          <div id="reviews-list"></div>
+        </div>
+      </div>
+
+      <!-- Columna derecha: card de compra (sticky) -->
+      <div id="card-sticky" style="position:sticky;top:1.5rem;">
+        <div class="card" style="padding:0;overflow:hidden;">
+
+          <!-- Thumbnail -->
+          <div id="card-thumbnail-wrap">
+            <img id="card-thumbnail" src="" alt="" style="width:100%;aspect-ratio:16/9;object-fit:cover;" />
+          </div>
+
+          <div style="padding:1.5rem;">
+            <!-- Precio -->
+            <div style="margin-bottom:1.25rem;">
+              <span id="card-price" style="font-size:2rem;font-weight:800;"></span>
+            </div>
+
+            <!-- CTA -->
+            <div id="cta-preview" class="hidden" style="padding:1rem;background:var(--warning-dim);border:1px solid var(--warning);border-radius:var(--radius-md);margin-bottom:.75rem;text-align:center;">
+              <span style="font-size:.8125rem;color:var(--warning);font-weight:600;">Curso no disponible para compra (modo preview)</span>
+            </div>
+
+            <div id="cta-buy">
+              <button id="btn-buy" class="btn btn-primary" style="width:100%;margin-bottom:.75rem;font-size:1rem;padding:.875rem;">
+                Comprar ahora
+              </button>
+              <p style="font-size:.75rem;color:var(--text-muted);text-align:center;">
+                Reembolso disponible si consumiste menos del 50% del curso.
+              </p>
+            </div>
+
+            <!-- Ya inscripto -->
+            <div id="cta-enrolled" class="hidden">
+              <a id="btn-go-course" href="#" class="btn btn-success" style="width:100%;margin-bottom:.75rem;font-size:1rem;padding:.875rem;">
+                Continuar curso
+              </a>
+              <div style="display:flex;align-items:center;justify-content:center;gap:.5rem;margin-top:.5rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="color:var(--success);"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                <span style="font-size:.8125rem;color:var(--success);font-weight:600;">Ya estás inscripto</span>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Incluye -->
+            <ul style="display:flex;flex-direction:column;gap:.625rem;font-size:.8125rem;color:var(--text-secondary);">
+              <li style="display:flex;gap:.625rem;align-items:center;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:var(--accent);flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>
+                <span id="includes-modules">— módulos</span>
+              </li>
+              <li style="display:flex;gap:.625rem;align-items:center;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:var(--accent);flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Quiz por módulo
+              </li>
+              <li style="display:flex;gap:.625rem;align-items:center;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:var(--accent);flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Certificado al aprobar
+              </li>
+              <li style="display:flex;gap:.625rem;align-items:center;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:var(--accent);flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Acceso de por vida
+              </li>
+            </ul>
+
+            <!-- Tags -->
+            <div id="card-tags" style="display:flex;flex-wrap:wrap;gap:.375rem;margin-top:1.25rem;"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+</div><!-- /.main-content -->
+
+<style>
+@media (max-width: 1023px) {
+  #card-sticky { top: calc(var(--topbar-height) + 1rem) !important; }
+  #detail-grid {
+    grid-template-columns: 1fr !important;
+  }
+  #detail-grid > div:last-child {
+    position: static !important;
+    order: -1;
+  }
+}
+@media (max-width: 767px) {
+  #outcomes-list {
+    grid-template-columns: 1fr !important;
+  }
+}
+</style>
+
+<script type="module">
+  import { onSessionChange, formatARS, getInitials } from '../../assets/js/app.js';
+  import { renderSidebar } from '../../assets/js/sidebar.js';
+  import { getCourse, getModules, getEnrollment, getCourseReviews } from '../../assets/js/db.js';
+  import { renderCloudinaryVideo } from '../../assets/js/storage.js';
+
+  const params   = new URLSearchParams(window.location.search);
+  const courseId = params.get('id');
+  const preview  = params.get('preview') === '1';
+
+  let currentSession = null;
+  let resolveSession;
+  const sessionPromise = new Promise(res => { resolveSession = res; });
+
+  onSessionChange((session) => {
+    currentSession = session;
+    renderSidebar(session, 'detail');
+    resolveSession();
+  });
+
+  if (!courseId) {
+    document.getElementById('detail-loading').classList.add('hidden');
+    document.getElementById('detail-error').classList.remove('hidden');
+  } else {
+    await sessionPromise;
+    await loadCourse();
+  }
+
+  async function loadCourse() {
+    const course = await getCourse(courseId);
+
+    document.getElementById('detail-loading').classList.add('hidden');
+
+    const isStaff = currentSession && (currentSession.userData?.role === 'admin' || currentSession.userData?.role === 'sub_admin');
+    const canPreview = preview && !!isStaff;
+
+    let isEnrolled = false;
+    if (currentSession && course) {
+      isEnrolled = !!(await getEnrollment(currentSession.user.uid, courseId));
+    }
+
+    if (!course) {
+      document.getElementById('detail-error').classList.remove('hidden');
+      return;
+    }
+
+    const canView = course.status === 'published' || canPreview || (course.status === 'removed' && isEnrolled);
+    if (!canView) {
+      document.getElementById('detail-error').classList.remove('hidden');
+      return;
+    }
+
+    if (canPreview) {
+      const statusLabels = { draft: 'Borrador', pending: 'En revisión', published: 'Publicado', rejected: 'Rechazado', removed: 'Archivado' };
+      document.getElementById('preview-status').textContent = statusLabels[course.status] || course.status;
+      document.getElementById('preview-banner').classList.remove('hidden');
+      document.getElementById('cta-preview').classList.remove('hidden');
+      document.getElementById('cta-buy').classList.add('hidden');
+      document.getElementById('cta-enrolled').classList.add('hidden');
+    } else if (course.status === 'removed' && isEnrolled) {
+      document.getElementById('archived-banner').classList.remove('hidden');
+    }
+
+    document.title = `${course.title} — Cursos SyM`;
+    document.getElementById('detail-content').classList.remove('hidden');
+
+    // Breadcrumb
+    document.getElementById('breadcrumb-category').textContent = course.category || 'General';
+
+    // Título y meta
+    document.getElementById('course-title').textContent    = course.title;
+    document.getElementById('course-subtitle').textContent = course.subtitle || '';
+
+    // Rating
+    const rating = course.rating || 0;
+    document.getElementById('course-rating-stars').textContent = '★'.repeat(Math.round(rating)) + '☆'.repeat(5 - Math.round(rating));
+    document.getElementById('course-rating-num').textContent   = rating.toFixed(1);
+    document.getElementById('course-rating-count').textContent = `(${course.totalRatings || 0} reseñas)`;
+    document.getElementById('course-students').textContent     = `${course.totalStudents || 0} alumnos`;
+    document.getElementById('course-modules-count').textContent = `${course.totalModules || 0} módulos`;
+
+    // Profesor
+    document.getElementById('teacher-initials').textContent = getInitials(course.teacherName);
+    document.getElementById('teacher-name').textContent     = course.teacherName;
+
+    // Video promo
+    if (course.promoVideoURL) {
+      document.getElementById('promo-video-wrap').classList.remove('hidden');
+      renderCloudinaryVideo('promo-video-wrap', course.promoVideoURL);
+    }
+
+    // Descripción
+    document.getElementById('course-description').textContent = course.description || '';
+
+    // Outcomes
+    if (course.outcomes?.length) {
+      document.getElementById('outcomes-block').classList.remove('hidden');
+      document.getElementById('outcomes-list').innerHTML = course.outcomes.map(o => `
+        <li style="display:flex;gap:.5rem;align-items:flex-start;font-size:.875rem;color:var(--text-secondary);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="color:var(--success);flex-shrink:0;margin-top:2px;"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          ${o}
+        </li>`).join('');
+    }
+
+    // Requisitos
+    if (course.requirements?.length) {
+      document.getElementById('requirements-block').classList.remove('hidden');
+      document.getElementById('requirements-list').innerHTML = course.requirements.map(r => `
+        <li style="display:flex;gap:.5rem;align-items:flex-start;font-size:.875rem;color:var(--text-secondary);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);flex-shrink:0;margin-top:2px;"><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>
+          ${r}
+        </li>`).join('');
+    }
+
+    // Módulos (temario colapsable)
+    const modules = await getModules(courseId);
+    const modList = document.getElementById('modules-list');
+    modList.innerHTML = modules.map((mod, i) => `
+      <div style="border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;">
+        <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.chevron').style.transform=this.nextElementSibling.classList.contains('hidden')?'rotate(0deg)':'rotate(180deg)';"
+          style="width:100%;display:flex;align-items:center;justify-content:space-between;
+            padding:.875rem 1rem;background:var(--bg-card);border:none;cursor:pointer;
+            color:var(--text-primary);font-weight:600;font-size:.9rem;text-align:left;">
+          <span>Módulo ${i + 1}: ${mod.title}</span>
+          <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink:0;transition:transform .2s ease;color:var(--text-muted);">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+        <div class="hidden" style="background:var(--bg-secondary);border-top:1px solid var(--border);">
+          ${(mod.lessons || []).map(l => `
+            <div style="border-bottom:1px solid var(--border);">
+              <div style="display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);flex-shrink:0;">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+                <span style="font-size:.875rem;color:var(--text-secondary);">${l.title}</span>
+              </div>
+              ${canPreview && l.videoURL ? `
+                <div style="padding:0 1rem 1rem;">
+                  <video src="${l.videoURL}" controls controlsList="nodownload" preload="metadata"
+                    style="width:100%;aspect-ratio:16/9;background:#000;border-radius:var(--radius-sm);display:block;"
+                    poster="${course.thumbnailURL || ''}"></video>
+                </div>` : ''}
+            </div>`).join('')}
+          <div style="padding:.625rem 1rem;font-size:.8125rem;color:var(--accent);display:flex;align-items:center;gap:.5rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Quiz al finalizar el módulo
+          </div>
+        </div>
+      </div>`).join('');
+
+    // Thumbnail card
+    const thumb = course.thumbnailURL || '';
+    if (thumb) {
+      document.getElementById('card-thumbnail').src = thumb;
+      document.getElementById('card-thumbnail').alt = course.title;
+    } else {
+      document.getElementById('card-thumbnail-wrap').innerHTML = `
+        <div style="width:100%;aspect-ratio:16/9;background:var(--bg-secondary);
+          display:flex;align-items:center;justify-content:center;color:var(--text-muted);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>
+        </div>`;
+    }
+
+    // Precio
+    const priceEl = document.getElementById('card-price');
+    if (course.isFree) {
+      priceEl.textContent = 'Gratis';
+      priceEl.style.color = 'var(--success)';
+    } else {
+      priceEl.textContent = formatARS(course.price);
+    }
+
+    // Incluye
+    document.getElementById('includes-modules').textContent = `${course.totalModules || modules.length} módulos`;
+
+    // Tags
+    const tagsWrap = document.getElementById('card-tags');
+    (course.tags || []).forEach(tag => {
+      const span = document.createElement('span');
+      span.className = 'badge badge-muted';
+      span.textContent = tag;
+      tagsWrap.appendChild(span);
+    });
+
+    // Verificar inscripción (se saltea en modo preview)
+    if (currentSession && !canPreview) {
+      const enrollment = await getEnrollment(currentSession.user.uid, courseId);
+      if (enrollment) {
+        document.getElementById('cta-buy').classList.add('hidden');
+        document.getElementById('cta-enrolled').classList.remove('hidden');
+        document.getElementById('btn-go-course').href = `course-player.html?id=${courseId}`;
+      }
+    }
+
+    // Botón comprar
+    document.getElementById('btn-buy').addEventListener('click', () => {
+      if (!currentSession) {
+        window.location.href = `../auth/login.html?redirect=course-detail.html?id=${courseId}`;
+        return;
+      }
+      window.location.href = `../checkout/checkout.html?type=course&courseId=${courseId}`;
+    });
+
+    // Reseñas
+    const reviews = await getCourseReviews(courseId);
+    const reviewsEl = document.getElementById('reviews-list');
+    if (reviews.length === 0) {
+      reviewsEl.innerHTML = `<p style="color:var(--text-muted);font-size:.875rem;">Todavía no hay reseñas para este curso.</p>`;
+    } else {
+      reviewsEl.innerHTML = reviews.slice(0, 5).map(r => `
+        <div style="padding:1.25rem 0;border-bottom:1px solid var(--border);">
+          <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.625rem;">
+            <div class="user-avatar" style="width:32px;height:32px;font-size:.75rem;">
+              <span>${getInitials(r.studentId)}</span>
+            </div>
+            <div>
+              <div style="font-size:.875rem;font-weight:600;">Alumno</div>
+              <div style="color:var(--warning);font-size:.875rem;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+            </div>
+          </div>
+          <p style="font-size:.875rem;color:var(--text-secondary);">${r.comment}</p>
+        </div>`).join('');
+    }
+  }
+</script>
+
+<script type="module" src="../../assets/js/spa.js"></script>
+
+</body>
+</html>

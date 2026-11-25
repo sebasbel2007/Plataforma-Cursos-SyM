@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<!-- File: plataforma cursos SyM/pages/dashboard-teacher/course-editor.html -->
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editor de curso — Cursos SyM</title>
+  <link rel="stylesheet" href="../../assets/css/main.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  <link rel="stylesheet" href="../../assets/css/responsive.css" />
+  <style>
+    /* ── Layout general ─────────────────────────────────────── */
+    .editor-root {
+      display: grid;
+      grid-template-columns: 220px 1fr 280px;
+      gap: 1.5rem;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 1.5rem 1.5rem 5rem;
+    }
+
+    /* ── Nav lateral izquierdo ──────────────────────────────── */
+    .editor-sidenav {
+      position: sticky;
+      top: calc(var(--topbar-height) + 1rem);
+      height: fit-content;
+      display: flex;
+      flex-direction: column;
+      gap: .25rem;
+    }
+    .sidenav-label {
+      font-size: .6875rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding: .5rem .75rem .25rem;
+    }
+    .sidenav-item {
+      display: flex;
+      align-items: center;
+      gap: .625rem;
+      padding: .5rem .75rem;
+      border-radius: var(--radius-sm);
+      font-size: .8125rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      border: none;
+      background: none;
+      text-align: left;
+      width: 100%;
+    }
+    .sidenav-item:hover {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+    .sidenav-item.active {
+      background: var(--accent-dim, rgba(0,212,255,.1));
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .sidenav-item svg { flex-shrink: 0; }
+
+    /* ── Secciones del editor ───────────────────────────────── */
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+      scroll-margin-top: calc(var(--topbar-height) + 1.5rem);
+    }
+    .section-title {
+      font-size: .8125rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    /* ── Módulos ────────────────────────────────────────────── */
+    .module-block {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+    .module-header-editor {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .875rem 1rem;
+      background: var(--bg-secondary);
+      cursor: pointer;
+      gap: .75rem;
+    }
+    .lesson-block {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      margin-bottom: .75rem;
+      background: var(--bg-primary);
+    }
+    .quiz-question-block {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      margin-bottom: .75rem;
+      background: var(--bg-primary);
+    }
+
+    /* ── Modal proponer categoría ───────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.6);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 200;
+    }
+    .modal-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    /* ── Autosave banner ────────────────────────────────────── */
+    #autosave-banner {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: .625rem 1.25rem;
+      font-size: .8125rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,.4);
+      z-index: 100;
+      transition: opacity .3s;
+    }
+    #autosave-banner.hidden { opacity: 0; pointer-events: none; }
+
+    @media (max-width: 1023px) {
+      .editor-root { grid-template-columns: 1fr; padding: .75rem .75rem 5rem; gap: 1rem; }
+      .editor-sidenav { display: none; }
+      .editor-root > div:last-child { display: none; }
+      .form-row { grid-template-columns: 1fr; }
+      .section-card { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="app-loader"><div class="loader-spinner"></div></div>
+
+<div id="cookie-banner" class="hidden">
+  <div class="cookie-box">
+    <h3>Usamos cookies 🍪</h3>
+    <p>Esta plataforma utiliza cookies esenciales para funcionar correctamente.</p>
+    <div class="cookie-actions">
+      <button id="cookie-reject" class="btn btn-ghost btn-sm">Rechazar</button>
+      <button id="cookie-accept" class="btn btn-primary btn-sm">Aceptar y continuar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Topbar -->
+<nav style="
+  position:sticky;top:0;z-index:90;
+  background:var(--bg-secondary);border-bottom:1px solid var(--border);
+  padding:0 1.5rem;height:var(--topbar-height);
+  display:flex;align-items:center;justify-content:space-between;
+  backdrop-filter:blur(8px);
+">
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <a href="index.html" style="display:flex;align-items:center;gap:.5rem;color:var(--text-muted);font-size:.875rem;">
+      ← Volver al panel
+    </a>
+    <span style="color:var(--border);">|</span>
+    <span id="editor-title-nav" style="font-size:.875rem;font-weight:600;">Nuevo curso</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:.75rem;">
+    <span id="save-status" style="font-size:.8125rem;color:var(--text-muted);"></span>
+    <button id="btn-save-draft" class="btn btn-ghost btn-sm">Guardar borrador</button>
+    <button id="btn-submit-review" class="btn btn-primary btn-sm">Enviar a revisión</button>
+  </div>
+</nav>
+
+<!-- Autosave banner -->
+<div id="autosave-banner" class="hidden">
+  <span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>
+  <span id="autosave-msg">Borrador local recuperado</span>
+  <button id="btn-discard-draft" class="btn btn-ghost btn-sm" style="font-size:.75rem;padding:.25rem .625rem;">Descartar</button>
+</div>
+
+<!-- Modal proponer categoría -->
+<div id="modal-category" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h3 style="margin-bottom:.25rem;font-size:1rem;">Proponer nueva categoría</h3>
+    <p style="font-size:.8125rem;color:var(--text-secondary);margin-bottom:1rem;">
+      El admin recibirá una notificación para aprobarla. Mientras tanto, quedará disponible de inmediato.
+    </p>
+    <label class="form-label">Nombre de la categoría</label>
+    <input id="new-category-input" class="form-input" placeholder="Ej: Robótica y automatización" style="margin-bottom:1rem;" />
+    <div style="display:flex;justify-content:flex-end;gap:.75rem;">
+      <button id="btn-cancel-category" class="btn btn-ghost btn-sm">Cancelar</button>
+      <button id="btn-confirm-category" class="btn btn-primary btn-sm">Proponer</button>
+    </div>
+  </div>
+</div>
+
+<div class="editor-root">
+
+  <!-- ── Nav lateral izquierdo ───────────────────────── -->
+  <nav class="editor-sidenav">
+    <div class="sidenav-label">Secciones</div>
+    <button class="sidenav-item active" data-section="sec-info">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 16v-4m0-4h.01"/></svg>
+      Información básica
+    </button>
+    <button class="sidenav-item" data-section="sec-media">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>
+      Multimedia
+    </button>
+    <button class="sidenav-item" data-section="sec-outcomes">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      Objetivos y requisitos
+    </button>
+    <button class="sidenav-item" data-section="sec-modules">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+      Módulos del curso
+    </button>
+    <button class="sidenav-item" data-section="sec-exam">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Examen final
+    </button>
+  </nav>
+
+  <!-- ── Columna principal ──────────────────────────── -->
+  <div>
+
+    <!-- Información básica -->
+    <div class="section-card" id="sec-info">
+      <div class="section-title">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Información básica
+      </div>
+
+      <div style="margin-bottom:1rem;">
+        <label class="form-label">Título del curso *</label>
+        <input id="field-title" class="form-input" placeholder="Ej: Diseño UX/UI desde cero" maxlength="100" />
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label class="form-label">Subtítulo</label>
+        <input id="field-subtitle" class="form-input" placeholder="Una descripción corta y atractiva" maxlength="160" />
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label class="form-label">Descripción completa *</label>
+        <textarea id="field-description" class="form-input" rows="5" placeholder="Describí en detalle de qué trata el curso..." style="resize:vertical;"></textarea>
+      </div>
+      <div class="form-row" style="margin-bottom:1rem;">
+        <div>
+          <label class="form-label">Categoría *</label>
+          <div style="display:flex;gap:.5rem;align-items:center;">
+            <select id="field-category" class="form-input" style="flex:1;">
+              <option value="">Seleccionar categoría...</option>
+            </select>
+            <button id="btn-propose-category" class="btn btn-ghost btn-sm" title="Proponer nueva categoría" style="flex-shrink:0;padding:.5rem .75rem;">
+              + Nueva
+            </button>
+          </div>
+        </div>
+        <div>
+          <label class="form-label">Precio (ARS) *</label>
+          <input id="field-price" class="form-input" type="number" min="0" placeholder="0 = gratis" />
+        </div>
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label class="form-label">Etiquetas (separadas por coma)</label>
+        <input id="field-tags" class="form-input" placeholder="Ej: diseño, figma, ux" />
+      </div>
+    </div>
+
+    <!-- Multimedia -->
+    <div class="section-card" id="sec-media">
+      <div class="section-title">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>
+        Multimedia
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label class="form-label">Miniatura del curso</label>
+        <div id="upload-thumbnail"></div>
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label class="form-label">Video promocional del curso</label>
+        <div id="upload-promo"></div>
+      </div>
+      <div>
+        <label class="form-label">URL certificado PDF (Google Drive)</label>
+        <input id="field-certificate" class="form-input" placeholder="https://drive.google.com/..." />
+      </div>
+    </div>
+
+    <!-- Objetivos y requisitos -->
+    <div class="section-card" id="sec-outcomes">
+      <div class="section-title">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Lo que van a aprender / Requisitos
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label class="form-label">Resultados esperados (uno por línea)</label>
+        <textarea id="field-outcomes" class="form-input" rows="4"
+          placeholder="Crear prototipos en Figma&#10;Entender principios de UX&#10;Diseñar interfaces responsivas"
+          style="resize:vertical;"></textarea>
+      </div>
+      <div>
+        <label class="form-label">Requisitos previos (uno por línea)</label>
+        <textarea id="field-requirements" class="form-input" rows="3"
+          placeholder="Conocimientos básicos de computación&#10;Tener instalado Figma"
+          style="resize:vertical;"></textarea>
+      </div>
+    </div>
+
+    <!-- Módulos -->
+    <div class="section-card" id="sec-modules">
+      <div class="section-title" style="justify-content:space-between;">
+        <span style="display:flex;align-items:center;gap:.5rem;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+          Módulos del curso
+        </span>
+        <span id="modules-count-label" style="font-size:.75rem;color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0;">0 / 15</span>
+      </div>
+
+      <div id="modules-container"></div>
+
+      <button id="btn-add-module" class="btn btn-ghost btn-sm" style="width:100%;margin-top:.5rem;">
+        + Agregar módulo
+      </button>
+    </div>
+
+    <!-- Examen final -->
+    <div class="section-card" id="sec-exam">
+      <div class="section-title">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Examen final
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label class="form-label">Puntaje mínimo para aprobar (%)</label>
+        <input id="exam-passing-score" class="form-input" type="number" min="1" max="100" value="70" style="max-width:120px;" />
+      </div>
+      <div id="exam-questions-container"></div>
+      <button id="btn-add-exam-question" class="btn btn-ghost btn-sm" style="width:100%;margin-top:.5rem;">
+        + Agregar pregunta al examen
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ── Columna derecha: estado y checklist ────────── -->
+  <div>
+    <div style="position:sticky;top:calc(var(--topbar-height) + 1rem);">
+      <div class="card" style="padding:1.25rem;margin-bottom:1rem;">
+        <h4 style="margin-bottom:1rem;font-size:.9375rem;">Estado del curso</h4>
+        <div style="display:flex;align-items:center;gap:.625rem;margin-bottom:1.25rem;">
+          <span id="status-badge-sidebar" class="status-badge status-draft">Borrador</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.625rem;font-size:.8125rem;color:var(--text-secondary);">
+          <div style="display:flex;justify-content:space-between;">
+            <span>Módulos</span>
+            <span id="summary-modules" style="font-weight:600;color:var(--text-primary);">0</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;">
+            <span>Clases totales</span>
+            <span id="summary-lessons" style="font-weight:600;color:var(--text-primary);">0</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;">
+            <span>Preguntas examen</span>
+            <span id="summary-exam-q" style="font-weight:600;color:var(--text-primary);">0</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;">
+            <span>Precio</span>
+            <span id="summary-price" style="font-weight:600;color:var(--text-primary);">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:1.25rem;">
+        <h4 style="margin-bottom:.75rem;font-size:.875rem;">Checklist</h4>
+        <div id="checklist" style="display:flex;flex-direction:column;gap:.5rem;font-size:.8125rem;"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script type="module" src="../../assets/js/app.js"></script>
+<script type="module" src="../../assets/js/course-editor.js"></script>
+
+</body>
+</html>

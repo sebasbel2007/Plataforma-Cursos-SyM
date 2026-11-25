@@ -1,0 +1,909 @@
+# CONTEXTO.md — Cursos SyM
+# Estado de desarrollo por módulo y etapa
+# Actualizar este archivo al completar cada ítem
+
+---
+
+## LEYENDA
+- [ ] Pendiente
+- [~] En progreso
+- [x] Completado
+- [T] Temporal (será reemplazado en etapa final)
+
+---
+
+## ETAPA 0 — Bases y Documentación
+- [x] Resumen del proyecto definido
+- [x] Stack tecnológico elegido
+- [x] Reglas de negocio definidas
+- [x] README.md creado
+- [x] CONTEXTO.md creado
+- [x] SCHEMA-BDD.md creado
+- [x] ESTRUCTURA-APP.md creado
+- [ ] Repositorio GitHub creado
+- [ ] Firebase project creado
+- [ ] .env configurado con credenciales reales
+
+---
+
+## ETAPA 1 — Estructura Base y Autenticación
+- [x] Carpetas y archivos HTML base creados
+- [x] CSS global: variables, temas claro/oscuro, tipografía
+- [x] CSS componentes: bento grid, tarjetas, botones, modales
+- [x] CSS responsive: menú lateral fijo/desplegable
+- [x] firebase-config.js conectado
+- [x] auth.js: registro de alumno (email/password)
+- [x] auth.js: login
+- [x] auth.js: logout
+- [x] auth.js: persistencia de sesión y redirección por rol
+- [x] auth.js: registro de profesor (requiere pago de membresía)
+- [x] auth.js: reset de contraseña (sendPasswordResetEmail)
+- [x] auth.js: bloqueo de cuenta suspendida al login
+- [x] app.js: toggle tema claro/oscuro + logo dinámico
+- [x] app.js: router básico entre páginas (routeGuard por rol)
+- [x] app.js: banner de cookies estricto
+- [x] app.js: loader global con fade-out
+- [x] app.js: utilidades globales (formatARS, formatDate, getInitials, showToast)
+
+---
+
+## ETAPA 2 — Catálogo y Ficha de Curso
+- [x] index.html: landing/catálogo con tarjetas
+- [x] catalog.html: filtros por categoría y etiqueta
+- [x] Búsqueda por texto libre (debounce 300ms)
+- [x] Filtro por precio (gratis / de pago / todos)
+- [x] Ordenamiento (más nuevo, mejor rating, más alumnos, precio)
+- [x] Chips de filtros activos con botón de limpieza individual
+- [x] course-detail.html: ficha completa del curso
+- [x] Tarjetas con efecto apilamiento por categoría
+- [x] Barra de progreso en tarjetas (para alumnos con curso comprado)
+- [x] Thumbnails desde Cloudinary (sin fallback a YouTube)
+
+---
+
+## ETAPA 3 — Dashboard Profesor y Editor de Cursos
+- [x] dashboard-teacher/index.html: panel principal bento grid
+- [x] course-editor.html: formulario datos básicos del curso
+- [x] course-editor.html: creador dinámico de módulos (+ Agregar Módulo, máx 15)
+- [x] course-editor.html: creador dinámico de clases por módulo (+ Agregar Clase)
+- [x] course-editor.html: upload de video por clase (Cloudinary, con barra de progreso)
+- [x] course-editor.html: creador de quizzes por módulo (multiple choice)
+- [x] course-editor.html: examen final (multiple choice, mín. 5 preguntas)
+- [x] course-editor.html: URL certificado PDF (Google Drive)
+- [x] course-editor.html: upload miniatura del curso (Cloudinary)
+- [x] course-editor.html: upload video promocional (Cloudinary)
+- [x] course-editor.html: checklist de publicación en tiempo real
+- [x] course-editor.html: resumen lateral (módulos, clases, precio)
+- [x] db.js: guardar borrador de curso en Firestore
+- [x] db.js: enviar curso a moderación (estado: "pending")
+- [x] stats.html: estadísticas de ventas e ingresos
+- [x] stats.html: tasa de finalización de alumnos por curso
+- [x] Notificaciones en tiempo real para el profesor
+
+---
+
+## ETAPA 4 — Moderación y Dashboard Admin
+- [x] dashboard-admin/index.html: panel principal bento grid
+- [x] moderation.html: cola de cursos pendientes
+- [x] moderation.html: aprobar curso (estado: "published") + notificación al profesor
+- [x] moderation.html: rechazar curso con motivo + notificación al profesor
+- [x] moderation.html: thumbnails desde Cloudinary
+- [x] users.html: listado de usuarios con búsqueda y filtro por rol
+- [x] users.html: suspender cuenta con motivo
+- [x] users.html: reactivar cuenta
+- [x] finances.html: listado de transacciones (tabs: todas / reembolsos)
+- [x] finances.html: stats de ingresos plataforma, profesores, membresías, reembolsos
+- [x] finances.html: procesar reembolso + notificación a alumno y profesor
+- [x] finances.html: disputas (visualización)
+
+---
+
+## ETAPA 5 — Consumo de Contenido (Player)
+- [x] course-player.html: reproductor de video Cloudinary (nativo HTML5)
+- [x] course-player.html: texto de apoyo por clase
+- [x] course-player.html: quiz obligatorio al final de cada módulo
+- [x] course-player.html: bloqueo de siguiente módulo hasta aprobar quiz
+- [x] course-player.html: reintentar quiz si no aprueba
+- [x] course-player.html: guardado de progreso en Firestore (% módulos completados)
+- [x] course-player.html: reanudación automática desde última clase no completada
+- [x] course-player.html: comentarios por clase (tiempo real con onSnapshot)
+- [x] course-player.html: respuestas anidadas en comentarios
+- [x] course-player.html: foro general del curso (posts + respuestas)
+- [x] course-player.html: banner de examen final al completar todos los módulos
+- [x] course-exam.html: examen final multiple choice
+- [x] course-exam.html: corrección automática con revisión de respuestas
+- [x] course-exam.html: mostrar/descargar certificado PDF al aprobar
+- [x] course-exam.html: reintentar examen si no aprueba
+
+---
+
+## ETAPA 6 — Pagos y Checkout
+- [x] checkout.html: resumen de compra
+- [x] checkout.html: aceptación de términos y condiciones
+- [x] checkout-result.html: página de resultado de pago (aprobado/fallido/pendiente)
+- [x] payments.js: integración Mercado Pago Checkout Pro (Sandbox)
+- [x] payments.js: membresía profesor $20.000 ARS
+- [x] payments.js: compra de curso (precio variable)
+- [x] payments.js: split 70/30 registrado en Firestore
+- [x] payments.js: renderCheckoutButton (redirect a MP)
+- [x] Lógica de reembolso (< 50% módulos consumidos)
+- [x] Notificación al profesor por venta (tiempo real)
+- [x] Notificación al alumno por compra exitosa
+
+---
+
+## ETAPA 7 — Dashboard Alumno
+- [x] dashboard-student/index.html: mis cursos comprados
+- [x] Barra de progreso por curso
+- [x] Historial de compras con estado
+- [x] Reseñas y calificaciones (estrellas 1-5) al completar curso
+- [x] Solicitud de reembolso desde dashboard y desde historial
+- [x] Thumbnails desde Cloudinary
+
+---
+
+## ETAPA 8 — Legal y Seguridad
+- [x] terms.html: términos y condiciones
+- [x] privacy.html: política de privacidad
+- [x] Banner de cookies estricto (bloquea la plataforma si no acepta)
+- [x] Reglas de seguridad Firestore (firestore-rules.txt)
+- [x] Validación de roles en cada página (JS del lado cliente)
+- [x] Bloqueo de cuenta suspendida al intentar login
+
+---
+
+## ETAPA 9 — Almacenamiento y Producción
+- [x] Cloudinary: upload de videos de clases con barra de progreso
+- [x] Cloudinary: upload de thumbnail del curso
+- [x] Cloudinary: upload de video promocional
+- [x] Cloudinary: esquema de carpetas cursos-sym/{teacherId}/{courseId}/...
+- [x] Cloudinary: renderCloudinaryVideo (reproductor HTML5 nativo)
+- [x] Cloudinary: getCourseThumbnail helper en storage.js
+- [T] Google Drive: certificados PDF (link externo, sin personalización)
+- [T] Mercado Pago Sandbox → producción (credenciales reales pendientes)
+- [ ] Mover MP_ACCESS_TOKEN a backend/Cloud Function antes de producción
+- [ ] Correos transaccionales (definir servicio: SendGrid / Firebase Extensions)
+- [ ] Deploy final en GitHub Pages
+
+---
+
+## DECISIONES PENDIENTES
+| Decisión | Estado | Notas |
+|---|---|---|
+| Almacenamiento PDFs certificados | Temporal | Google Drive link externo |
+| Correos transaccionales | Pendiente | Depende de pasarela final |
+| Mercado Pago producción | Pendiente | Sandbox activo, MP_ACCESS_TOKEN en frontend (solo OK en sandbox) |
+| Deploy GitHub Pages | Pendiente | Requiere Firebase project real |
+
+---
+
+## NOTAS TÉCNICAS IMPORTANTES
+- Videos: Cloudinary (upload directo desde browser con XMLHttpRequest + progreso)
+- Thumbnails e imágenes: Cloudinary, esquema cursos-sym/{teacherId}/{courseId}/thumbnails/thumbnail
+- Videos promo: Cloudinary, esquema cursos-sym/{teacherId}/{courseId}/promo/promo
+- Videos de clases: Cloudinary, esquema cursos-sym/{teacherId}/{courseId}/videos/{moduleId}_{lessonId}
+- PDFs certificados: el profesor pega link de Google Drive; el sistema NO personaliza el PDF
+- Reproductor: video HTML5 nativo con controlsList="nodownload"
+- Progreso del alumno: se guarda en Firestore como array de módulos completados
+- Reembolso: se habilita solo si `modulosCompletados / totalModulos < 0.5`
+- Notificaciones: Firestore `onSnapshot` listeners, colección `notifications/{userId}`
+- Roles: guardados en Firestore `users/{uid}.role` = "student" | "teacher" | "admin"
+- Pagos: Mercado Pago Checkout Pro, redirect a sandbox_init_point, resultado en checkout-result.html
+- Split: 70% profesor / 30% plataforma, registrado en `transactions` de Firestore
+
+
+# ESTRUCTURA-APP.md — Cursos SyM
+# Arquitectura de archivos, flujos de usuario y decisiones de diseño
+
+---
+
+## ÁRBOL DE ARCHIVOS COMPLETO
+
+```
+proyecto plataforma de cursos/
+│
+├── README.md                            # Documentación principal
+├── CONTEXTO.md                          # Estado de avance por etapa
+├── SCHEMA-BDD.md                        # Esquema Firestore completo
+├── ESTRUCTURA-APP.md                    # Este archivo
+├── resumen proyecto.txt                 # Idea original del proyecto
+│
+├── img/                                 # Logos (nivel raíz, fuera de la app)
+│   ├── logo-claro.png
+│   └── logo-oscuro.png
+│
+└── plataforma cursos SyM/               # TODO EL CÓDIGO VA AQUÍ
+    │
+    ├── index.html                       # Página de inicio = Catálogo público
+    ├── .env.example                     # Variables de entorno requeridas
+    │
+    ├── assets/
+    │   ├── css/
+    │   │   ├── main.css                 # Variables CSS, reset, temas, tipografía
+    │   │   ├── components.css           # Bento grid, tarjetas, botones, modales, nav
+    │   │   └── responsive.css           # Breakpoints y menú mobile
+    │   │
+    │   ├── js/
+    │   │   ├── app.js                   # Init, router, toggle tema, guards de ruta
+    │   │   ├── auth.js                  # Firebase Auth: registro, login, logout, sesión
+    │   │   ├── db.js                    # Firestore: CRUD de todas las colecciones
+    │   │   ├── storage.js               # Cloudinary uploads (videos, thumbnails, promo) + Drive (certificados)
+    │   │   ├── payments.js              # Mercado Pago Sandbox — reemplazar en etapa final
+    │   │   └── notifications.js         # onSnapshot listeners, render campanita
+    │   │
+    │   └── img/                         # Imágenes de la UI (íconos, placeholders)
+    │
+    ├── pages/
+    │   │
+    │   ├── auth/
+    │   │   ├── login.html               # Formulario login
+    │   │   └── register.html            # Formulario registro (alumno por defecto)
+    │   │
+    │   ├── catalog/
+    │   │   └── catalog.html             # Catálogo con filtros y búsqueda
+    │   │
+    │   ├── course/
+    │   │   ├── course-detail.html       # Ficha del curso (pública, antes de comprar)
+    │   │   ├── course-player.html       # Consumo de contenido (requiere compra)
+    │   │   └── course-exam.html         # Examen final (requiere completar todos los módulos)
+    │   │
+    │   ├── checkout/
+    │   │   ├── checkout.html            # Resumen + términos + pago
+    │   │   └── checkout-result.html     # Resultado del pago (aprobado/fallido/pendiente)
+    │   │
+    │   ├── dashboard-student/
+    │   │   └── index.html               # Mis cursos, progreso, historial, reseñas
+    │   │
+    │   ├── dashboard-teacher/
+    │   │   ├── index.html               # Panel principal del profesor
+    │   │   ├── course-editor.html       # Crear/editar curso completo
+    │   │   └── stats.html               # Estadísticas de ventas y alumnos
+    │   │
+    │   └── dashboard-admin/
+    │       ├── index.html               # Panel principal admin
+    │       ├── moderation.html          # Cola de moderación de cursos
+    │       ├── users.html               # Gestión de usuarios
+    │       └── finances.html            # Transacciones, reembolsos, disputas
+    │
+    ├── firebase/
+    │   ├── firebase-config.js           # Config Firebase (lee de .env)
+    │   ├── firestore-rules.txt          # Reglas de seguridad Firestore
+    │   └── firestore-schema.md          # Copia del schema para referencia rápida
+    │
+    └── legal/
+        ├── terms.html                   # Términos y condiciones
+        └── privacy.html                 # Política de privacidad
+```
+
+---
+
+## FLUJOS DE USUARIO
+
+### Flujo Alumno
+```
+Visita index.html (catálogo)
+  → Sin sesión: ve cursos, no puede comprar
+  → Clic en curso → course-detail.html
+      → Clic "Comprar" → redirect a login.html (si no tiene sesión)
+      → login.html / register.html → vuelve a checkout.html
+  → checkout.html: resumen + acepta términos + pago Mercado Pago
+  → Pago aprobado → enrollment creado en Firestore → redirect a course-player.html
+  → course-player.html:
+      Clase 1 (video + texto) → Quiz módulo 1 (obligatorio) → Clase 2...
+      Al completar todos los módulos → course-exam.html
+  → course-exam.html: examen final → si aprueba → certificado disponible
+  → dashboard-student: ver progreso, historial, dejar reseña
+```
+
+### Flujo Profesor
+```
+register.html → selecciona rol "Profesor"
+  → redirect a checkout.html (membresía $20.000 ARS)
+  → Pago aprobado → role = "teacher" en Firestore
+  → dashboard-teacher/index.html
+  → course-editor.html: llena datos del curso
+      → Guarda borrador (status: "draft")
+      → Envía a moderación (status: "pending")
+  → Admin aprueba → status: "published" → notificación al profesor
+  → stats.html: ve ventas, ingresos, alumnos
+```
+
+### Flujo Admin
+```
+login.html → role = "admin" → redirect a dashboard-admin/index.html
+  → moderation.html: ve cursos en status "pending"
+      → Aprueba → status: "published" + notificación al profesor
+      → Rechaza → status: "rejected" + motivo + notificación al profesor
+  → users.html: gestiona cuentas
+  → finances.html: ve transacciones, procesa reembolsos
+```
+
+---
+
+## SISTEMA DE TEMAS (CLARO / OSCURO)
+
+### Variables CSS (main.css)
+```css
+/* Modo oscuro (default) */
+:root[data-theme="dark"] {
+  --bg-primary: #0d0d0f;
+  --bg-secondary: #16161a;
+  --bg-card: #1c1c21;
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0b0;
+  --accent: #00d4ff;          /* azul/cian neón suave */
+  --accent-hover: #00b8d9;
+  --border: #2a2a35;
+  --success: #00c896;
+  --error: #ff4757;
+  --warning: #ffa502;
+}
+
+/* Modo claro */
+:root[data-theme="light"] {
+  --bg-primary: #f5f5f7;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --text-primary: #0d0d0f;
+  --text-secondary: #6b6b80;
+  --accent: #0099cc;
+  --accent-hover: #007aaa;
+  --border: #e0e0e8;
+  --success: #00a878;
+  --error: #e63946;
+  --warning: #f4a261;
+}
+```
+
+### Lógica de toggle (app.js)
+- Lee preferencia guardada en `localStorage`
+- Si no hay preferencia, usa `prefers-color-scheme` del sistema
+- Al cambiar: actualiza `data-theme` en `<html>`, guarda en `localStorage`
+- Logo: `<img id="logo">` cambia `src` entre `logo-claro.png` y `logo-oscuro.png`
+
+---
+
+## SISTEMA DE ROLES Y GUARDS
+
+### Guards de ruta (app.js)
+Cada página protegida verifica al cargar:
+```
+1. ¿Hay sesión activa? → No → redirect login.html
+2. ¿El rol del usuario coincide con la página? → No → redirect index.html
+```
+
+| Página | Rol requerido |
+|---|---|
+| dashboard-student/ | student |
+| dashboard-teacher/ | teacher |
+| dashboard-admin/ | admin |
+| course-player.html | student + enrollment activo |
+| course-exam.html | student + todos los módulos completados |
+| checkout.html | cualquier usuario autenticado |
+
+---
+
+## SISTEMA DE NOTIFICACIONES
+
+- Colección Firestore: `notifications/{notificationId}`
+- Al cargar cualquier dashboard: `onSnapshot` escucha notificaciones del usuario
+- Campanita muestra badge con cantidad de no leídas
+- Al hacer clic: marca como leídas (`read: true`)
+
+### Tipos de notificación por rol
+| Tipo | Destinatario | Trigger |
+|---|---|---|
+| `sale` | teacher | Alumno compra su curso |
+| `enrollment` | student | Compra exitosa |
+| `course_approved` | teacher | Admin aprueba curso |
+| `course_rejected` | teacher | Admin rechaza curso |
+| `refund` | teacher + student | Reembolso procesado |
+| `moderation` | admin | Nuevo curso enviado a revisión |
+
+---
+
+## LÓGICA DE REEMBOLSO
+
+```
+progressPercent = (completedModules.length / course.totalModules) * 100
+
+if (progressPercent < 50) → refundEligible = true
+else → refundEligible = false
+```
+
+- El alumno solicita reembolso desde dashboard-student
+- Admin lo procesa desde finances.html
+- Al aprobar: `transaction.status = "refunded"`, `enrollment` marcado como reembolsado
+- Notificación a alumno y profesor
+
+---
+
+## SPLIT DE PAGOS (SIMULADO)
+
+```
+totalAmount = course.price (en ARS)
+platformFee = totalAmount * 0.30
+teacherEarnings = totalAmount * 0.70
+```
+
+- Se guarda en `transactions/{id}` al confirmar el pago
+- No hay transferencia real en Sandbox, solo registro en Firestore
+- El panel de finanzas del admin muestra los totales
+
+---
+
+## ESTRUCTURA DEL CURSO (EDITOR)
+
+```
+Curso
+├── Datos básicos (título, descripción, precio, categoría, tags, etc.)
+├── Multimedia (upload miniatura Cloudinary, upload video promo Cloudinary)
+├── Módulo 1 (máx 15 módulos)
+│   ├── Clase 1.1 (upload video Cloudinary + texto apoyo)
+│   ├── Clase 1.2
+│   └── Quiz del módulo (multiple choice, mínimo 1 pregunta)
+├── Módulo 2
+│   └── ...
+└── Examen Final (multiple choice, mínimo 5 preguntas)
+    └── URL Certificado PDF (Google Drive)
+```
+
+---
+
+## ESQUEMA CLOUDINARY
+
+```
+cursos-sym/
+└── {teacherId}/
+    └── {courseId}/
+        ├── videos/
+        │   └── {moduleId}_{lessonId}     # video de cada clase
+        ├── thumbnails/
+        │   └── thumbnail                 # miniatura del curso
+        └── promo/
+            └── promo                     # video promocional
+```
+
+---
+
+## VARIABLES DE ENTORNO (.env.example)
+
+```
+# Firebase
+FIREBASE_API_KEY=
+FIREBASE_AUTH_DOMAIN=
+FIREBASE_PROJECT_ID=
+FIREBASE_STORAGE_BUCKET=
+FIREBASE_MESSAGING_SENDER_ID=
+FIREBASE_APP_ID=
+
+# Mercado Pago Sandbox
+MP_PUBLIC_KEY=
+MP_ACCESS_TOKEN=
+```
+
+---
+
+## DECISIONES TÉCNICAS CLAVE
+
+| Decisión | Elegido | Motivo |
+|---|---|---|
+| Framework JS | Vanilla JS | Sin dependencias, proyecto escolar |
+| Auth | Firebase Authentication | Gratuito, fácil integración |
+| BDD | Firestore | Tiempo real, sin servidor |
+| Videos | Cloudinary (upload directo) | Upload con progreso, reproductor HTML5 nativo |
+| PDFs | Google Drive link (temp) | Gratuito, sin backend |
+| Imágenes cursos | Cloudinary (upload directo) | Upload con preview, esquema de carpetas por curso |
+| Pagos | Mercado Pago Sandbox | Requerimiento del proyecto, ARS |
+| Hosting | GitHub Pages | Gratuito, fácil deploy |
+| CSS | Variables nativas + BEM | Sin frameworks, mantenible |
+
+
+
+
+
+# SCHEMA-BDD.md — Cursos SyM
+# Esquema de colecciones Firestore
+# Todos los campos, tipos y relaciones
+
+---
+
+## COLECCIÓN: `users`
+**Documento ID:** `{uid}` (Firebase Auth UID)
+
+```
+users/{uid}
+├── uid: string
+├── email: string
+├── displayName: string
+├── photoURL: string | null
+├── role: "student" | "teacher" | "admin"
+├── membershipStatus: "none" | "active" | "expired"   // solo teachers
+├── membershipPaidAt: timestamp | null
+├── createdAt: timestamp
+├── suspended: boolean
+└── suspendedReason: string | null
+```
+
+---
+
+## COLECCIÓN: `courses`
+**Documento ID:** auto-generado
+
+```
+courses/{courseId}
+├── courseId: string
+├── teacherId: string                    // ref a users/{uid}
+├── teacherName: string
+├── title: string
+├── subtitle: string
+├── description: string                  // texto largo
+├── category: string
+├── tags: array<string>
+├── requirements: array<string>          // qué necesita saber el alumno
+├── outcomes: array<string>              // 3-5 resultados esperados
+├── price: number                        // en ARS, 0 = gratis
+├── isFree: boolean
+├── thumbnailURL: string                 // URL externa (Cloudinary)
+├── promoVideoURL: string                // URL YouTube
+├── totalModules: number
+├── totalDuration: string                // ej. "4h 30min" (calculado)
+├── status: "draft" | "pending" | "published" | "rejected"
+├── rejectionReason: string | null
+├── certificateURL: string               // URL Google Drive (PDF plantilla)
+├── rating: number                       // promedio calculado
+├── totalRatings: number
+├── totalStudents: number
+├── createdAt: timestamp
+└── updatedAt: timestamp
+```
+
+---
+
+## SUBCOLECCIÓN: `courses/{courseId}/modules`
+**Documento ID:** auto-generado (ordenar por `order`)
+
+```
+courses/{courseId}/modules/{moduleId}
+├── moduleId: string
+├── order: number                        // 1, 2, 3... (máx 15)
+├── title: string
+└── lessons: array<{                     // array embebido dentro del módulo
+      lessonId: string,
+      order: number,
+      title: string,
+      videoURL: string,                  // URL YouTube
+      content: string                    // texto de apoyo (markdown o HTML)
+    }>
+```
+
+---
+
+## SUBCOLECCIÓN: `courses/{courseId}/modules/{moduleId}/quiz`
+**Documento ID:** fijo `"quiz"` (uno por módulo)
+
+```
+courses/{courseId}/modules/{moduleId}/quiz/quiz
+├── questions: array<{
+      questionId: string,
+      text: string,
+      options: {
+        a: string,
+        b: string,
+        c: string,
+        d: string
+      },
+      correctOption: "a" | "b" | "c" | "d"
+    }>
+└── passingScore: number                 // % mínimo para aprobar (ej. 70)
+```
+
+---
+
+## SUBCOLECCIÓN: `courses/{courseId}/finalExam`
+**Documento ID:** fijo `"exam"`
+
+```
+courses/{courseId}/finalExam/exam
+├── questions: array<{
+      questionId: string,
+      text: string,
+      options: {
+        a: string,
+        b: string,
+        c: string,
+        d: string
+      },
+      correctOption: "a" | "b" | "c" | "d"
+    }>
+└── passingScore: number                 // % mínimo para aprobar (ej. 70)
+```
+
+---
+
+## COLECCIÓN: `enrollments`
+**Documento ID:** `{uid}_{courseId}`
+
+```
+enrollments/{uid}_{courseId}
+├── studentId: string
+├── courseId: string
+├── teacherId: string
+├── enrolledAt: timestamp
+├── pricePaid: number                    // en ARS
+├── paymentId: string                    // ID de Mercado Pago
+├── completedModules: array<string>      // array de moduleIds completados
+├── completedLessons: array<string>      // array de lessonIds completados
+├── quizResults: map<moduleId, {         // resultado por quiz
+      passed: boolean,
+      score: number,
+      attempts: number
+    }>
+├── examResult: {
+      passed: boolean,
+      score: number,
+      completedAt: timestamp | null
+    } | null
+├── certificateIssued: boolean
+├── certificateIssuedAt: timestamp | null
+├── progressPercent: number              // (completedModules.length / totalModules) * 100
+├── refundEligible: boolean              // true si progressPercent < 50
+└── refundRequested: boolean
+```
+
+---
+
+## COLECCIÓN: `transactions`
+**Documento ID:** auto-generado
+
+```
+transactions/{transactionId}
+├── type: "course_purchase" | "membership" | "refund"
+├── studentId: string
+├── teacherId: string | null
+├── courseId: string | null
+├── amount: number                       // total en ARS
+├── platformFee: number                  // 30% del amount
+├── teacherEarnings: number              // 70% del amount
+├── paymentId: string                    // ID Mercado Pago
+├── status: "pending" | "approved" | "refunded" | "disputed"
+├── createdAt: timestamp
+└── updatedAt: timestamp
+```
+
+---
+
+## COLECCIÓN: `reviews`
+**Documento ID:** `{uid}_{courseId}`
+
+```
+reviews/{uid}_{courseId}
+├── studentId: string
+├── courseId: string
+├── teacherId: string
+├── rating: number                       // 1-5 estrellas
+├── comment: string
+└── createdAt: timestamp
+```
+
+---
+
+## SUBCOLECCIÓN: `courses/{courseId}/lessons/{lessonId}/comments`
+**Documento ID:** auto-generado
+
+```
+courses/{courseId}/lessons/{lessonId}/comments/{commentId}
+├── authorId: string
+├── authorName: string
+├── authorRole: "student" | "teacher"
+├── text: string
+├── createdAt: timestamp
+└── parentId: string | null              // para respuestas anidadas
+```
+
+---
+
+## SUBCOLECCIÓN: `courses/{courseId}/forum`
+**Documento ID:** auto-generado
+
+```
+courses/{courseId}/forum/{postId}
+├── authorId: string
+├── authorName: string
+├── authorRole: "student" | "teacher"
+├── title: string
+├── text: string
+├── createdAt: timestamp
+└── replies: array<{
+      authorId: string,
+      authorName: string,
+      text: string,
+      createdAt: timestamp
+    }>
+```
+
+---
+
+## COLECCIÓN: `notifications`
+**Documento ID:** auto-generado
+
+```
+notifications/{notificationId}
+├── userId: string                       // destinatario
+├── type: "sale" | "enrollment" | "moderation" | "refund" | "course_approved" | "course_rejected"
+├── title: string
+├── message: string
+├── read: boolean
+├── relatedCourseId: string | null
+├── relatedTransactionId: string | null
+└── createdAt: timestamp
+```
+
+---
+
+## COLECCIÓN: `categories`
+**Documento ID:** auto-generado
+
+```
+categories/{categoryId}
+├── name: string
+├── slug: string
+├── createdBy: string                    // uid del admin o teacher
+└── createdAt: timestamp
+```
+
+---
+
+## COLECCIÓN: `tags`
+**Documento ID:** auto-generado
+
+```
+tags/{tagId}
+├── name: string
+├── slug: string
+├── createdBy: string
+└── createdAt: timestamp
+```
+
+---
+
+## ÍNDICES RECOMENDADOS (Firestore Composite Indexes)
+- `courses`: `status` ASC + `createdAt` DESC
+- `courses`: `category` ASC + `status` ASC + `rating` DESC
+- `enrollments`: `studentId` ASC + `enrolledAt` DESC
+- `enrollments`: `teacherId` ASC + `enrolledAt` DESC
+- `transactions`: `teacherId` ASC + `createdAt` DESC
+- `notifications`: `userId` ASC + `read` ASC + `createdAt` DESC
+
+
+
+# Cursos SyM — Plataforma de Educación Online
+
+Marketplace de cursos online con sistema de roles, evaluación integrada y pasarela de pagos.  
+Proyecto escolar — Desarrollo web con servicios en la nube.
+
+---
+
+## Stack Tecnológico
+
+| Capa | Tecnología |
+|---|---|
+| Frontend | HTML5, CSS3, Vanilla JS |
+| Auth | Firebase Authentication |
+| Base de Datos | Firebase Firestore |
+| Almacenamiento (temp) | YouTube (videos), Google Drive (PDFs) |
+| Pagos (temp) | Mercado Pago Sandbox |
+| Hosting | GitHub Pages |
+
+> **Temporal:** YouTube y Drive serán reemplazados por una solución de almacenamiento definitiva en la etapa final. Mercado Pago Sandbox será configurado con credenciales reales al finalizar.
+
+---
+
+## Roles de Usuario
+
+- **Alumno** — Registro gratuito. Compra cursos individuales. Consume contenido, hace quizzes y examen final. Obtiene certificado PDF.
+- **Profesor** — Membresía única de $20.000 ARS. Crea y publica cursos. Recibe 70% de cada venta. Sus cursos pasan por moderación antes de publicarse.
+- **Administrador** — Control total. Modera cursos, gestiona usuarios y finanzas.
+
+---
+
+## Reglas de Negocio Clave
+
+- Split de pagos: **70% Profesor / 30% Plataforma** (fijo, no configurable)
+- Membresía profesor: **$20.000 ARS** (pago único)
+- Precio de cursos: **$0 (gratis) hasta $500 USD en ARS**
+- Reembolso: permitido solo si el alumno consumió **menos del 50% de los módulos**
+- Cursos: máximo **15 módulos** por curso
+- Quiz por módulo: **obligatorio** para avanzar al siguiente
+- Examen final: **multiple choice**, corrección automática
+- Todo curso (incluso gratuito) pasa por **moderación del Admin** antes de publicarse
+- Categorías y etiquetas: creadas por **Admin y Profesores**
+- Notificaciones in-app: **tiempo real** (Firestore listeners)
+- Correos transaccionales: **pendiente** (se implementa con la pasarela definitiva)
+- Idioma: **Español únicamente**
+
+---
+
+## Diseño y UI
+
+- Modo claro y oscuro con toggle (botón en esquina desktop / menú lateral mobile)
+- Logo cambia según el modo: `logo-claro.png` / `logo-oscuro.png`
+- Paleta: fondos gris oscuro/negro, texto blanco, acento azul/cian neón suave
+- Layout: **Bento Grid** para dashboards y paneles
+- Tarjetas de cursos: esquinas redondeadas, miniatura, barra de progreso, efecto apilamiento si hay múltiples en categoría
+- Menú lateral fijo (desktop) / desplegable (mobile)
+- Tipografía sans-serif moderna, contraste claro entre títulos e info secundaria
+
+---
+
+## Estructura de Carpetas
+
+```
+plataforma cursos SyM/
+├── index.html                  # Landing / Catálogo (página de inicio)
+├── assets/
+│   ├── css/
+│   │   ├── main.css            # Estilos globales, variables, temas
+│   │   ├── components.css      # Tarjetas, botones, modales, bento grid
+│   │   └── responsive.css      # Media queries
+│   ├── js/
+│   │   ├── app.js              # Inicialización, router, tema claro/oscuro
+│   │   ├── auth.js             # Login, registro, logout, estado de sesión
+│   │   ├── db.js               # Todas las operaciones con Firestore
+│   │   ├── storage.js          # Manejo de URLs (YouTube/Drive por ahora)
+│   │   ├── payments.js         # Integración Mercado Pago Sandbox
+│   │   └── notifications.js    # Listeners en tiempo real, campanita
+│   └── img/                    # Imágenes estáticas de la UI
+├── pages/
+│   ├── auth/
+│   │   ├── login.html
+│   │   └── register.html
+│   ├── catalog/
+│   │   └── catalog.html        # Catálogo con filtros
+│   ├── course/
+│   │   ├── course-detail.html  # Ficha del curso (antes de comprar)
+│   │   ├── course-player.html  # Consumo de contenido (video+texto+quiz)
+│   │   └── course-exam.html    # Examen final
+│   ├── checkout/
+│   │   └── checkout.html       # Confirmación de compra + términos
+│   ├── dashboard-student/
+│   │   └── index.html          # Dashboard del alumno
+│   ├── dashboard-teacher/
+│   │   ├── index.html          # Dashboard del profesor
+│   │   ├── course-editor.html  # Crear/editar curso (módulos, clases, quizzes)
+│   │   └── stats.html          # Estadísticas de ventas y alumnos
+│   └── dashboard-admin/
+│       ├── index.html          # Panel admin principal
+│       ├── moderation.html     # Cola de cursos para aprobar/rechazar
+│       ├── users.html          # Gestión de usuarios
+│       └── finances.html       # Pagos, comisiones, disputas, reembolsos
+├── firebase/
+│   ├── firebase-config.js      # Credenciales Firebase (referencia a .env)
+│   ├── firestore-rules.txt     # Reglas de seguridad de Firestore
+│   └── firestore-schema.md     # Esquema completo de colecciones
+├── legal/
+│   ├── terms.html              # Términos y condiciones
+│   └── privacy.html            # Política de privacidad
+└── .env.example                # Variables de entorno requeridas
+```
+
+---
+
+## Setup
+
+```bash
+# 1. Clonar repositorio
+git clone https://github.com/[usuario]/cursos-sym.git
+
+# 2. Copiar variables de entorno
+cp .env.example .env
+# Completar con credenciales de Firebase y Mercado Pago Sandbox
+
+# 3. Abrir index.html en navegador o deployar en GitHub Pages
+```
+
+---
+
+## Estado del Proyecto
+
+Ver `CONTEXTO.md` para el estado detallado por módulo y etapas de desarrollo.

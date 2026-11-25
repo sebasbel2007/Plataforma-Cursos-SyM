@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<!-- File: plataforma cursos SyM/pages/dashboard-admin/course-review.html -->
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Revisión de curso — Cursos SyM</title>
+  <link rel="stylesheet" href="../../assets/css/main.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  <link rel="stylesheet" href="../../assets/css/responsive.css" />
+  <style>
+    .sidebar-nav {
+      padding: .75rem 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: .875rem;
+      padding: .625rem 1rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: .875rem;
+      font-weight: 500;
+      border-radius: var(--radius-md);
+      margin: 0 .5rem;
+      transition: all .15s ease;
+    }
+    .sidebar-link:hover { background: var(--bg-secondary); color: var(--text-primary); }
+    .sidebar-link.active { background: var(--accent-dim); color: var(--accent); }
+    .sidebar-link-secondary { color: var(--text-muted); font-size: .8125rem; }
+    .sidebar-icon { display: flex; align-items: center; flex-shrink: 0; width: 18px; height: 18px; }
+    .sidebar-text { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-badge { background: var(--error); color: #fff; font-size: .625rem; font-weight: 700; padding: .125rem .5rem; border-radius: 999px; min-width: 20px; text-align: center; }
+    .sidebar-divider { height: 1px; background: var(--border); margin: .5rem 1rem; }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .375rem;
+      padding: .375rem .875rem;
+      border-radius: 999px;
+      font-size: .6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .02em;
+    }
+    .status-draft     { background: var(--bg-secondary); color: var(--text-muted); border: 1px solid var(--border); }
+    .status-pending   { background: var(--warning-dim);  color: var(--warning);    border: 1px solid var(--warning); }
+    .status-published { background: var(--success-dim);  color: var(--success);    border: 1px solid var(--success); }
+    .status-rejected  { background: var(--error-dim);    color: var(--error);      border: 1px solid var(--error); }
+
+    .mod-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: .875rem 1.25rem;
+      background: var(--bg-card);
+      border: none;
+      cursor: pointer;
+      color: var(--text-primary);
+      font-weight: 600;
+      font-size: .9375rem;
+      text-align: left;
+    }
+    .mod-toggle:hover { background: var(--bg-card-hover); }
+
+    .subnav-btn {
+      padding: .5rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-size: .8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all .15s ease;
+      flex-shrink: 0;
+    }
+    .subnav-btn:hover { color: var(--text-primary); border-color: var(--accent); }
+    .subnav-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    [id^="section-"] { scroll-margin-top: 72px; }
+
+    .lesson-notes {
+      margin-top: .75rem;
+      padding: .875rem 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: .875rem;
+      color: var(--text-secondary);
+      white-space: pre-line;
+      line-height: 1.7;
+    }
+
+    .check-item { display: flex; align-items: flex-start; gap: .75rem; padding: .75rem 1.25rem; border-bottom: 1px solid var(--border); }
+    .check-item:last-child { border-bottom: none; }
+    .check-icon { flex-shrink: 0; margin-top: 2px; }
+  </style>
+</head>
+<body>
+
+<div class="app-layout">
+
+  <div class="main-content">
+    <div class="page-content">
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:1rem;">
+        <a href="courses.html" class="btn btn-ghost btn-sm" style="text-decoration:none;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-right:.375rem;"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+          Volver a Cursos
+        </a>
+        <span id="review-status-badge" class="status-badge hidden">—</span>
+      </div>
+
+      <!-- Loader / error -->
+      <div id="review-loading" style="display:flex;justify-content:center;padding:4rem;"><div class="loader-spinner"></div></div>
+      <div id="review-error" class="hidden empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        <p>No se pudo cargar la revisión del curso.</p>
+        <a href="courses.html" class="btn btn-primary btn-sm" style="text-decoration:none;">Ir a Cursos</a>
+      </div>
+
+      <div id="review-content" class="hidden">
+
+        <!-- Sub-navegación sticky por secciones -->
+        <div id="review-subnav" style="position:sticky;top:0;z-index:50;background:var(--bg-primary);border-bottom:1px solid var(--border);padding:.75rem 0 1rem;margin-bottom:1.5rem;display:flex;gap:.375rem;overflow-x:auto;">
+          <button class="subnav-btn active" data-target="section-summary">Resumen</button>
+          <button class="subnav-btn" data-target="section-checklist">Checklist</button>
+          <button class="subnav-btn" data-target="section-content">Contenido</button>
+          <button class="subnav-btn" data-target="section-exam">Examen final</button>
+          <button class="subnav-btn" data-target="section-certificate">Certificado</button>
+        </div>
+
+        <!-- Cabecera + panel de revisión -->
+        <div class="card" id="section-summary" style="padding:1.5rem;margin-bottom:1.5rem;">
+          <div style="display:flex;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;align-items:flex-start;">
+            <div style="flex:1;min-width:260px;">
+              <h2 id="review-title" style="font-size:1.4rem;margin-bottom:.375rem;">—</h2>
+              <p id="review-meta" style="font-size:.875rem;color:var(--text-muted);line-height:1.7;margin-bottom:.75rem;"></p>
+              <div style="display:flex;flex-wrap:wrap;gap:.5rem;font-size:.8125rem;">
+                <span id="review-stats" style="color:var(--text-secondary);"></span>
+              </div>
+              <div id="review-rejection" class="hidden" style="margin-top:.875rem;font-size:.8125rem;color:var(--error);background:var(--error-dim);border:1px solid var(--error);border-radius:var(--radius-md);padding:.75rem 1rem;"></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:.5rem;align-items:stretch;min-width:200px;">
+              <a id="btn-preview" href="#" target="_blank" class="btn btn-ghost btn-sm" style="text-decoration:none;justify-content:center;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-right:.375rem;"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                Ver ficha pública
+              </a>
+              <div id="review-actions" class="hidden" style="display:flex;flex-direction:column;gap:.5rem;">
+                <button id="btn-approve" class="btn btn-success">Aprobar y publicar</button>
+                <button id="btn-reject" class="btn btn-error">Rechazar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Advertencias -->
+        <div id="review-warnings"></div>
+
+        <!-- Checklist -->
+        <h3 id="section-checklist" style="margin-bottom:1rem;font-size:1.05rem;">Checklist de publicación</h3>
+        <div class="card" style="padding:0;margin-bottom:1.5rem;" id="review-checklist"></div>
+
+        <!-- Contenido -->
+        <h3 id="section-content" style="margin-bottom:1rem;font-size:1.05rem;">Contenido del curso</h3>
+        <div id="review-modules" style="margin-bottom:1.5rem;"></div>
+
+        <!-- Examen final -->
+        <h3 id="section-exam" style="margin-bottom:1rem;font-size:1.05rem;">Examen final</h3>
+        <div class="card" style="padding:0;overflow:hidden;margin-bottom:1.5rem;" id="review-exam"></div>
+
+        <!-- Certificado -->
+        <h3 id="section-certificate" style="margin-bottom:1rem;font-size:1.05rem;">Certificado</h3>
+        <div class="card" style="padding:0;overflow:hidden;" id="review-certificate"></div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal rechazo curso -->
+<div id="modal-reject" class="hidden" style="position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:1rem;">
+  <div class="card" style="width:100%;max-width:480px;padding:2rem;">
+    <h3 style="margin-bottom:.5rem;">Rechazar curso</h3>
+    <p id="reject-course-name" style="font-size:.875rem;color:var(--text-muted);margin-bottom:1.25rem;"></p>
+    <label class="form-label">Motivo del rechazo *</label>
+    <textarea id="reject-reason" class="form-input" rows="4" placeholder="Explicá al profesor por qué se rechaza el curso..." style="resize:vertical;margin-bottom:1.25rem;"></textarea>
+    <div style="display:flex;gap:.75rem;justify-content:flex-end;">
+      <button id="btn-cancel-reject" class="btn btn-ghost">Cancelar</button>
+      <button id="btn-confirm-reject" class="btn btn-error">Confirmar rechazo</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="../../assets/js/app.js"></script>
+<script type="module" src="../../assets/js/admin-utils.js"></script>
+<script type="module" src="../../assets/js/course-review.js"></script>
+<script type="module" src="../../assets/js/spa.js"></script>
+</body>
+</html>

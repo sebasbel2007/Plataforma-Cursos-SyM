@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<!-- File: plataforma cursos SyM/pages/dashboard-teacher/index.html -->
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel del profesor — Cursos SyM</title>
+  <link rel="stylesheet" href="../../assets/css/main.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  <link rel="stylesheet" href="../../assets/css/responsive.css" />
+  <style>
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .375rem;
+      padding: .25rem .625rem;
+      border-radius: 999px;
+      font-size: .6875rem;
+      font-weight: 600;
+    }
+    .status-draft     { background: var(--bg-secondary); color: var(--text-muted); border: 1px solid var(--border); }
+    .status-pending   { background: var(--warning-dim);  color: var(--warning);    border: 1px solid var(--warning); }
+    .status-published { background: var(--success-dim);  color: var(--success);    border: 1px solid var(--success); }
+    .status-rejected  { background: var(--error-dim);    color: var(--error);      border: 1px solid var(--error); }
+    .course-row {
+      display: grid;
+      grid-template-columns: 48px 1fr auto auto auto;
+      align-items: center;
+      gap: .75rem;
+      padding: .75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      transition: background var(--transition);
+    }
+    .course-row:hover { background: var(--bg-card-hover); }
+    .tab-btn {
+      padding: .5rem .75rem;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      font-size: .8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all var(--transition);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: var(--radius-sm);
+    }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+    @media (max-width: 767px) {
+      .page-content { padding: .75rem !important; }
+      #stats-grid .card { padding: .5rem .625rem !important; }
+      #stats-grid .stat-label { font-size: .6875rem !important; margin-bottom: .125rem !important; }
+      #stats-grid .stat-val { font-size: 1.125rem !important; height: auto !important; width: auto !important; }
+      .course-row { grid-template-columns: 40px 1fr !important; gap: .375rem !important; padding: .625rem .75rem !important; }
+      .course-row .row-status,
+      .course-row .row-price,
+      .course-row .row-actions { grid-column: 2; }
+      #view-panel .quick-grid { grid-template-columns: 1fr !important; gap: .5rem !important; margin-top: .75rem !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-layout">
+  <div class="main-content">
+    <div class="page-content">
+
+      <!-- Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.5rem;">
+        <div>
+          <h2 style="margin-bottom:.125rem;font-size:1.125rem;">Panel del profesor</h2>
+          <p id="welcome-msg" style="font-size:.8125rem;color:var(--text-muted);"></p>
+        </div>
+      </div>
+
+      <!-- ── Vista: Panel principal ── -->
+      <div id="view-panel">
+        <div id="stats-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem;">
+          <div class="card" style="padding:1rem;">
+            <p class="stat-label" style="font-size:.75rem;color:var(--text-muted);margin-bottom:.25rem;">Total cursos</p>
+            <p id="stat-total" class="stat-val skeleton" style="font-size:1.5rem;font-weight:800;height:1.75rem;width:2.5rem;"></p>
+          </div>
+          <div class="card" style="padding:1rem;">
+            <p class="stat-label" style="font-size:.75rem;color:var(--text-muted);margin-bottom:.25rem;">Publicados</p>
+            <p id="stat-published" class="stat-val skeleton" style="font-size:1.5rem;font-weight:800;height:1.75rem;width:2.5rem;"></p>
+          </div>
+          <div class="card" style="padding:1rem;">
+            <p class="stat-label" style="font-size:.75rem;color:var(--text-muted);margin-bottom:.25rem;">Total alumnos</p>
+            <p id="stat-students" class="stat-val skeleton" style="font-size:1.5rem;font-weight:800;height:1.75rem;width:2.5rem;"></p>
+          </div>
+          <div class="card" style="padding:1rem;">
+            <p class="stat-label" style="font-size:.75rem;color:var(--text-muted);margin-bottom:.25rem;">Ganancias (70%)</p>
+            <p id="stat-earnings" class="stat-val skeleton" style="font-size:1.25rem;font-weight:800;height:1.75rem;width:5rem;"></p>
+          </div>
+        </div>
+
+        <!-- Accesos rápidos -->
+        <div class="quick-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem;margin-top:1.25rem;">
+          <a href="#" data-view="courses" class="card" style="padding:1rem;text-decoration:none;display:flex;align-items:center;gap:.75rem;">
+            <span style="color:var(--accent);flex-shrink:0;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg></span>
+            <span>
+              <span style="display:block;font-weight:600;font-size:.9375rem;">Mis cursos</span>
+              <span style="font-size:.75rem;color:var(--text-muted);">Gestioná tus cursos</span>
+            </span>
+          </a>
+          <a href="course-editor.html" class="card" style="padding:1rem;text-decoration:none;display:flex;align-items:center;gap:.75rem;">
+            <span style="color:var(--accent);flex-shrink:0;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg></span>
+            <span>
+              <span style="display:block;font-weight:600;font-size:.9375rem;">Nuevo curso</span>
+              <span style="font-size:.75rem;color:var(--text-muted);">Crear desde cero</span>
+            </span>
+          </a>
+          <a href="#" data-view="reviews" class="card" style="padding:1rem;text-decoration:none;display:flex;align-items:center;gap:.75rem;">
+            <span style="color:var(--accent);flex-shrink:0;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg></span>
+            <span>
+              <span style="display:block;font-weight:600;font-size:.9375rem;">Reseñas</span>
+              <span style="font-size:.75rem;color:var(--text-muted);">Qué opinan tus alumnos</span>
+            </span>
+          </a>
+        </div>
+      </div>
+
+      <!-- ── Vista: Mis cursos ── -->
+      <div id="view-courses" class="hidden">
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+            <h3 style="font-size:.9375rem;">Mis cursos</h3>
+            <span id="courses-count" style="font-size:.8125rem;color:var(--text-muted);"></span>
+          </div>
+          <div style="padding:.75rem 1rem;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:.625rem;">
+            <input id="courses-search" class="form-input" type="search" placeholder="Buscar por título..." style="font-size:.875rem;" />
+            <div style="display:flex;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid var(--border);">
+              <button class="tab-btn active" data-course-tab="all">Todos</button>
+              <button class="tab-btn" data-course-tab="published">Publicados</button>
+              <button class="tab-btn" data-course-tab="pending">Revisión</button>
+              <button class="tab-btn" data-course-tab="draft">Borradores</button>
+              <button class="tab-btn" data-course-tab="rejected">Rechazados</button>
+              <button class="tab-btn" data-course-tab="removed">Archivados</button>
+            </div>
+          </div>
+
+          <div id="courses-loading">
+            <div style="display:grid;grid-template-columns:48px 1fr auto;align-items:center;gap:.75rem;padding:.75rem 1rem;border-bottom:1px solid var(--border);">
+              <div class="skeleton" style="width:48px;height:36px;border-radius:var(--radius-sm);"></div>
+              <div><div class="skeleton" style="height:12px;width:60%;margin-bottom:.375rem;"></div><div class="skeleton" style="height:10px;width:40%;"></div></div>
+              <div class="skeleton" style="height:22px;width:70px;border-radius:999px;"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:48px 1fr auto;align-items:center;gap:.75rem;padding:.75rem 1rem;border-bottom:1px solid var(--border);">
+              <div class="skeleton" style="width:48px;height:36px;border-radius:var(--radius-sm);"></div>
+              <div><div class="skeleton" style="height:12px;width:55%;margin-bottom:.375rem;"></div><div class="skeleton" style="height:10px;width:35%;"></div></div>
+              <div class="skeleton" style="height:22px;width:70px;border-radius:999px;"></div>
+            </div>
+          </div>
+
+          <div id="courses-list" class="hidden"></div>
+
+          <div id="courses-empty" class="hidden" style="padding:2.5rem;text-align:center;">
+            <p style="color:var(--text-muted);margin-bottom:1rem;">Todavía no creaste ningún curso.</p>
+            <a href="course-editor.html" class="btn btn-primary btn-sm">Crear mi primer curso</a>
+          </div>
+
+          <div id="courses-filter-empty" class="hidden" style="padding:2.5rem;text-align:center;">
+            <p style="color:var(--text-muted);">No hay cursos que coincidan con el filtro.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Vista: Reseñas ── -->
+      <div id="view-reviews" class="hidden">
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+            <h3 style="font-size:.9375rem;">Reseñas de mis cursos</h3>
+            <span id="reviews-count" style="font-size:.8125rem;color:var(--text-muted);"></span>
+          </div>
+          <div id="teacher-reviews-list" style="padding:1rem;">
+            <p style="color:var(--text-muted);font-size:.875rem;text-align:center;padding:1rem 0;">Cargando...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Vista: Actividad ── -->
+      <div id="view-activity" class="hidden">
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);">
+            <h3 style="font-size:.9375rem;">Actividad reciente</h3>
+          </div>
+          <div id="notif-list" style="padding:1rem;">
+            <p style="color:var(--text-muted);font-size:.875rem;text-align:center;padding:1rem 0;">Cargando...</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script type="module" src="../../assets/js/app.js"></script>
+<script type="module" src="../../assets/js/dashboard-teacher.js"></script>
+<script type="module" src="../../assets/js/spa.js"></script>
+</body>
+</html>

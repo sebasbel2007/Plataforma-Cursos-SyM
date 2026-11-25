@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<!-- File: plataforma cursos SyM/pages/course/course-exam.html -->
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Examen final — Cursos SyM</title>
+  <link rel="stylesheet" href="../../assets/css/main.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  <link rel="stylesheet" href="../../assets/css/responsive.css" />
+  <style>
+    .exam-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 5rem;
+    }
+    .exam-option {
+      display: flex;
+      align-items: flex-start;
+      gap: .875rem;
+      padding: .875rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-size: .9375rem;
+    }
+    .exam-option:hover  { border-color: var(--accent); background: var(--accent-dim); }
+    .exam-option.selected { border-color: var(--accent); background: var(--accent-dim); }
+    .exam-option.correct  { border-color: var(--success); background: var(--success-dim); pointer-events:none; }
+    .exam-option.wrong    { border-color: var(--error);   background: var(--error-dim);   pointer-events:none; }
+    .exam-option.locked   { pointer-events: none; }
+  </style>
+</head>
+<body>
+
+<div id="app-loader"><div class="loader-spinner"></div></div>
+
+<div id="cookie-banner" class="hidden">
+  <div class="cookie-box">
+    <h3>Usamos cookies 🍪</h3>
+    <p>Esta plataforma utiliza cookies esenciales para funcionar correctamente.</p>
+    <div class="cookie-actions">
+      <button id="cookie-reject" class="btn btn-ghost btn-sm">Rechazar</button>
+      <button id="cookie-accept" class="btn btn-primary btn-sm">Aceptar y continuar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Topbar ──────────────────────────────────────────────── -->
+<nav style="
+  position:sticky;top:0;z-index:90;
+  background:var(--bg-secondary);
+  border-bottom:1px solid var(--border);
+  padding:0 1.5rem;height:var(--topbar-height);
+  display:flex;align-items:center;justify-content:space-between;
+  backdrop-filter:blur(8px);
+">
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <a href="../../index.html">
+      <img data-logo data-logo-base="../.." src="../../img/logo-oscuro.png" alt="Cursos SyM" style="height:28px;width:auto;" />
+    </a>
+    <span style="color:var(--border);">|</span>
+    <span id="nav-course-title" style="font-size:.875rem;font-weight:600;color:var(--text-secondary);"></span>
+  </div>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <div class="theme-toggle theme-toggle-desktop">
+      <span class="theme-toggle-option" data-value="dark"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg></span>
+      <span class="theme-toggle-option" data-value="light"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg></span>
+    </div>
+    <div class="user-avatar" id="nav-avatar" style="cursor:pointer;">
+      <span id="nav-initials">?</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ─── Contenido ───────────────────────────────────────────── -->
+<div class="exam-wrap">
+
+  <!-- Carga -->
+  <div id="exam-loading" style="display:flex;justify-content:center;padding:4rem;">
+    <div class="loader-spinner"></div>
+  </div>
+
+  <!-- Error -->
+  <div id="exam-error" class="hidden empty-state">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/>
+    </svg>
+    <p id="exam-error-msg">No podés acceder al examen todavía.</p>
+    <a id="exam-error-link" href="#" class="btn btn-primary" style="margin-top:1rem;">Volver al curso</a>
+  </div>
+
+  <!-- Examen -->
+  <div id="exam-content" class="hidden">
+
+    <!-- Header -->
+    <div style="margin-bottom:2.5rem;">
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:var(--accent);">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        <h1 style="font-size:1.5rem;">Examen final</h1>
+      </div>
+      <p id="exam-subtitle" style="color:var(--text-muted);font-size:.875rem;"></p>
+    </div>
+
+    <!-- Preguntas -->
+    <div id="exam-questions" style="display:flex;flex-direction:column;gap:2rem;"></div>
+
+    <!-- Acciones -->
+    <div id="exam-actions" style="margin-top:2.5rem;display:flex;justify-content:flex-end;gap:.75rem;">
+      <button id="btn-exam-submit" class="btn btn-primary" style="padding:.875rem 2rem;font-size:1rem;">
+        Enviar examen
+      </button>
+    </div>
+  </div>
+
+  <!-- Resultado -->
+  <div id="exam-result" class="hidden">
+
+    <!-- Aprobado -->
+    <div id="result-pass" class="hidden" style="text-align:center;padding:2rem 0;">
+      <div style="
+        width:80px;height:80px;border-radius:50%;
+        background:var(--success-dim);border:2px solid var(--success);
+        display:flex;align-items:center;justify-content:center;
+        margin:0 auto 1.5rem;
+      ">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:var(--success);">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+      <h2 style="color:var(--success);margin-bottom:.5rem;">¡Aprobaste el examen!</h2>
+      <p id="result-score-pass" style="font-size:1.1rem;margin-bottom:.25rem;"></p>
+      <p style="color:var(--text-muted);font-size:.875rem;margin-bottom:2rem;">Ya podés descargar tu certificado.</p>
+
+      <div id="certificate-block" style="
+        background:var(--bg-card);
+        border:1px solid var(--border-accent);
+        border-radius:var(--radius-lg);
+        padding:1.75rem;
+        max-width:480px;
+        margin:0 auto 2rem;
+      ">
+        <div style="display:flex;align-items:center;gap:.875rem;margin-bottom:1.25rem;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" style="color:var(--accent);flex-shrink:0;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+          </svg>
+          <div>
+            <h4 style="margin-bottom:.125rem;">Certificado de finalización</h4>
+            <p id="certificate-course-name" style="font-size:.8125rem;color:var(--text-muted);"></p>
+          </div>
+        </div>
+        <a id="btn-download-cert" href="#" target="_blank" rel="noopener"
+          class="btn btn-primary" style="width:100%;justify-content:center;display:flex;gap:.5rem;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>
+          Descargar certificado
+        </a>
+      </div>
+
+      <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;">
+        <a id="btn-back-course" href="#" class="btn btn-ghost">Ver curso</a>
+        <a href="../dashboard-student/index.html" class="btn btn-secondary">Ir a mis cursos</a>
+      </div>
+    </div>
+
+    <!-- Reprobado -->
+    <div id="result-fail" class="hidden" style="text-align:center;padding:2rem 0;">
+      <div style="
+        width:80px;height:80px;border-radius:50%;
+        background:var(--error-dim);border:2px solid var(--error);
+        display:flex;align-items:center;justify-content:center;
+        margin:0 auto 1.5rem;
+      ">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:var(--error);">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </div>
+      <h2 style="color:var(--error);margin-bottom:.5rem;">No aprobaste</h2>
+      <p id="result-score-fail" style="font-size:1.1rem;margin-bottom:.25rem;"></p>
+      <p style="color:var(--text-muted);font-size:.875rem;margin-bottom:2rem;">Podés repasar el contenido y volver a intentarlo.</p>
+      <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;">
+        <a id="btn-back-player" href="#" class="btn btn-ghost">Repasar curso</a>
+        <button id="btn-retry-exam" class="btn btn-primary">Reintentar examen</button>
+      </div>
+    </div>
+
+    <!-- Revisión de respuestas -->
+    <div id="result-review" style="margin-top:3rem;">
+      <h3 style="margin-bottom:1.5rem;">Revisión de respuestas</h3>
+      <div id="review-questions" style="display:flex;flex-direction:column;gap:2rem;"></div>
+    </div>
+
+  </div>
+
+</div>
+
+<script type="module" src="../../assets/js/app.js"></script>
+<script type="module" src="../../assets/js/course-exam.js"></script>
+
+</body>
+</html>

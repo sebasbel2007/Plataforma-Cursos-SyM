@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<!-- File: plataforma cursos SyM/pages/dashboard-admin/index.html -->
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Admin — Cursos SyM</title>
+  <link rel="stylesheet" href="../../assets/css/main.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  <link rel="stylesheet" href="../../assets/css/responsive.css" />
+  <style>
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: var(--radius-sm);
+    }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+
+    /* Sidebar Navigation */
+    .sidebar-nav {
+      padding: .75rem 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: .875rem;
+      padding: .625rem 1rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: .875rem;
+      font-weight: 500;
+      border-radius: var(--radius-md);
+      margin: 0 .5rem;
+      transition: all .15s ease;
+    }
+    .sidebar-link:hover {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+    .sidebar-link.active {
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+    .sidebar-link-secondary {
+      color: var(--text-muted);
+      font-size: .8125rem;
+    }
+    .sidebar-icon {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+    }
+    .sidebar-text {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sidebar-badge {
+      background: var(--error);
+      color: #fff;
+      font-size: .625rem;
+      font-weight: 700;
+      padding: .125rem .5rem;
+      border-radius: 999px;
+      min-width: 20px;
+      text-align: center;
+    }
+    .sidebar-divider {
+      height: 1px;
+      background: var(--border);
+      margin: .5rem 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-layout">
+
+  <!-- ─── Contenido ────────────────────────────────────────── -->
+  <div class="main-content">
+    <div class="page-content">
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <h2 style="margin-bottom:.25rem;">Panel de administración</h2>
+          <p id="welcome-msg" style="font-size:.875rem;color:var(--text-muted);"></p>
+        </div>
+      </div>
+
+      <!-- Bento stats -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;">
+        <div class="card" style="padding:1.25rem;">
+          <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.375rem;">Usuarios totales</p>
+          <p id="stat-users" class="skeleton" style="font-size:1.75rem;font-weight:800;height:2rem;width:3rem;"></p>
+        </div>
+        <div class="card" style="padding:1.25rem;">
+          <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.375rem;">Cursos publicados</p>
+          <p id="stat-courses" class="skeleton" style="font-size:1.75rem;font-weight:800;height:2rem;width:3rem;"></p>
+        </div>
+        <div class="card" style="padding:1.25rem;">
+          <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.375rem;">Ingresos plataforma (30%)</p>
+          <p id="stat-revenue" class="skeleton" style="font-size:1.5rem;font-weight:800;height:2rem;width:6rem;"></p>
+        </div>
+        <div class="card" style="padding:1.25rem;border-color:var(--warning);">
+          <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.375rem;">Pendientes de revisión</p>
+          <p id="stat-pending" class="skeleton" style="font-size:1.75rem;font-weight:800;height:2rem;width:3rem;color:var(--warning);"></p>
+        </div>
+      </div>
+
+      <!-- Segunda fila bento -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem;">
+        <div class="card" style="padding:1.25rem;">
+          <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.375rem;">Alumnos</p>
+          <p id="stat-students" class="skeleton" style="font-size:1.75rem;font-weight:800;height:2rem;width:3rem;"></p>
+        </div>
+        <div class="card" style="padding:1.25rem;">
+          <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.375rem;">Profesores activos</p>
+          <p id="stat-teachers" class="skeleton" style="font-size:1.75rem;font-weight:800;height:2rem;width:3rem;"></p>
+        </div>
+        <div class="card" style="padding:1.25rem;">
+          <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.375rem;">Reembolsos pendientes</p>
+          <p id="stat-refunds" class="skeleton" style="font-size:1.75rem;font-weight:800;height:2rem;width:3rem;color:var(--error);"></p>
+        </div>
+      </div>
+
+      <!-- Accesos rápidos -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem;">
+        <a href="moderation.html" class="card" style="padding:1.5rem;text-decoration:none;display:flex;align-items:center;gap:1rem;transition:border-color var(--transition);" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="width:44px;height:44px;border-radius:var(--radius-md);background:var(--accent-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:var(--accent);"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div><div style="font-weight:600;font-size:.9375rem;">Moderar cursos</div><div style="font-size:.8125rem;color:var(--text-muted);">Aprobar o rechazar</div></div>
+        </a>
+        <a href="users.html" class="card" style="padding:1.5rem;text-decoration:none;display:flex;align-items:center;gap:1rem;transition:border-color var(--transition);" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="width:44px;height:44px;border-radius:var(--radius-md);background:var(--accent-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:var(--accent);"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <div><div style="font-weight:600;font-size:.9375rem;">Gestionar usuarios</div><div style="font-size:.8125rem;color:var(--text-muted);">Suspender / reactivar</div></div>
+        </a>
+        <a href="finances.html" class="card" style="padding:1.5rem;text-decoration:none;display:flex;align-items:center;gap:1rem;transition:border-color var(--transition);" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="width:44px;height:44px;border-radius:var(--radius-md);background:var(--accent-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:var(--accent);"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div><div style="font-weight:600;font-size:.9375rem;">Finanzas</div><div style="font-size:.8125rem;color:var(--text-muted);">Transacciones y reembolsos</div></div>
+        </a>
+      </div>
+
+      <!-- Notificaciones recientes -->
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);">
+          <h3 style="font-size:1rem;">Actividad reciente</h3>
+        </div>
+        <div id="notif-list" style="padding:1rem;">
+          <p style="color:var(--text-muted);font-size:.875rem;text-align:center;padding:1rem 0;">Cargando...</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script type="module" src="../../assets/js/app.js"></script>
+<script type="module" src="../../assets/js/admin-utils.js"></script>
+<script type="module" src="../../assets/js/dashboard-admin.js"></script>
+
+<script type="module" src="../../assets/js/spa.js"></script>
+</body>
+</html>

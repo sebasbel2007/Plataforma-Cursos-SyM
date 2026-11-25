@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<!-- File: plataforma cursos SyM/pages/dashboard-student/index.html -->
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi panel — Cursos SyM</title>
+  <link rel="stylesheet" href="../../assets/css/main.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  <link rel="stylesheet" href="../../assets/css/responsive.css" />
+  <style>
+    .progress-bar-track {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 3px;
+      transition: width .4s ease;
+    }
+    .progress-bar-fill.done { background: var(--success); }
+    .enrolled-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .enrolled-card:hover { border-color: var(--border-accent); box-shadow: var(--shadow-sm); }
+    .star-btn {
+      background: none;
+      border: none;
+      font-size: 1.375rem;
+      cursor: pointer;
+      color: var(--border);
+      transition: color var(--transition), transform .1s;
+      padding: 0 .125rem;
+    }
+    .star-btn:hover, .star-btn.active { color: var(--warning); transform: scale(1.15); }
+    .tab-btn {
+      padding: .625rem 1rem;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      font-size: .875rem;
+      font-weight: 500;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all var(--transition);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: var(--radius-sm);
+    }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+    @media (max-width: 767px) {
+      .tab-btn { padding: .5rem .625rem; font-size: .75rem; }
+      #stats-grid .card { padding: .5rem .625rem !important; }
+      #stats-grid p[id^="stat-"] { font-size: 1.125rem !important; }
+      #stats-grid p:first-child { font-size: .6875rem !important; margin-bottom: .125rem !important; }
+      .page-content { padding: .75rem !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-layout">
+
+  <!-- ─── Contenido principal ──────────────────────────────── -->
+  <div class="main-content">
+
+    <div class="page-content">
+
+      <!-- Bento: stats rápidas -->
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem;margin-bottom:1.25rem;" id="stats-grid">
+        <div class="card" style="padding:1.25rem;">
+          <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.375rem;">Cursos inscriptos</p>
+          <p id="stat-enrolled" class="skeleton" style="font-size:1.75rem;font-weight:800;height:2rem;width:3rem;"></p>
+        </div>
+        <div class="card" style="padding:1.25rem;">
+          <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.375rem;">Completados</p>
+          <p id="stat-completed" class="skeleton" style="font-size:1.75rem;font-weight:800;height:2rem;width:3rem;"></p>
+        </div>
+        <div class="card" style="padding:1.25rem;">
+          <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.375rem;">Certificados</p>
+          <p id="stat-certs" class="skeleton" style="font-size:1.75rem;font-weight:800;height:2rem;width:3rem;"></p>
+        </div>
+        <div class="card" style="padding:1.25rem;">
+          <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.375rem;">En progreso</p>
+          <p id="stat-inprogress" class="skeleton" style="font-size:1.75rem;font-weight:800;height:2rem;width:3rem;"></p>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div style="display:flex;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid var(--border);margin-bottom:1.75rem;">
+        <button class="tab-btn active" data-tab="courses">Mis cursos</button>
+        <button class="tab-btn" data-tab="history">Historial</button>
+        <button class="tab-btn" data-tab="reviews">Mis reseñas</button>
+        <button class="tab-btn" data-tab="notifications">Notificaciones</button>
+      </div>
+
+      <!-- ── Panel: Mis cursos ── -->
+      <div id="panel-courses">
+        <div id="courses-loading" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem;">
+          ${Array(4).fill(`
+            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;">
+              <div class="skeleton" style="width:100%;aspect-ratio:16/9;"></div>
+              <div style="padding:1rem;">
+                <div class="skeleton" style="height:14px;width:70%;margin-bottom:.625rem;"></div>
+                <div class="skeleton" style="height:8px;width:100%;margin-bottom:.375rem;"></div>
+                <div class="skeleton" style="height:8px;width:60%;"></div>
+              </div>
+            </div>`).join('')}
+        </div>
+        <div id="courses-list" class="hidden" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem;"></div>
+        <div id="courses-empty" class="hidden empty-state">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          <p>Todavía no compraste ningún curso.</p>
+          <a href="../catalog/catalog.html" class="btn btn-primary" style="margin-top:1rem;">Explorar catálogo</a>
+        </div>
+      </div>
+
+      <!-- ── Panel: Historial ── -->
+      <div id="panel-history" class="hidden">
+        <div id="history-loading" style="display:flex;justify-content:center;padding:3rem;"><div class="loader-spinner"></div></div>
+        <div id="history-table-wrap" class="hidden">
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:.875rem;">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border);color:var(--text-muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;">
+                  <th style="padding:.75rem 1rem;text-align:left;font-weight:600;">Curso</th>
+                  <th style="padding:.75rem 1rem;text-align:left;font-weight:600;">Fecha</th>
+                  <th style="padding:.75rem 1rem;text-align:right;font-weight:600;">Monto</th>
+                  <th style="padding:.75rem 1rem;text-align:center;font-weight:600;">Estado</th>
+                  <th style="padding:.75rem 1rem;text-align:center;font-weight:600;">Reembolso</th>
+                </tr>
+              </thead>
+              <tbody id="history-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div id="history-empty" class="hidden empty-state">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          <p>No tenés compras registradas.</p>
+        </div>
+      </div>
+
+      <!-- ── Panel: Reseñas ── -->
+      <div id="panel-reviews" class="hidden">
+        <div id="reviews-loading" style="display:flex;justify-content:center;padding:3rem;"><div class="loader-spinner"></div></div>
+        <div id="reviews-list" class="hidden" style="display:flex;flex-direction:column;gap:1rem;"></div>
+        <div id="reviews-empty" class="hidden empty-state">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+          <p>Todavía no dejaste ninguna reseña.</p>
+        </div>
+      </div>
+
+      <!-- ── Panel: Notificaciones ── -->
+      <div id="panel-notifications" class="hidden">
+        <div class="card" style="padding:1.25rem 1.25rem 0;">
+          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:var(--accent);"><path stroke-linecap="round" stroke-linejoin="round" d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path stroke-linecap="round" stroke-linejoin="round" d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <h3 style="font-size:.9375rem;margin:0;">Notificaciones recientes</h3>
+          </div>
+          <div id="notif-list" style="padding:1rem 0;"></div>
+        </div>
+      </div>
+
+      <!-- ── Panel: Perfil ── (unused, page is profile.html) -->
+      <div id="panel-profile" class="hidden" style="display:none!important;">
+        <div class="card" style="padding:1.5rem;max-width:480px;">
+          <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+            <div class="user-avatar" style="width:56px;height:56px;font-size:1.25rem;"><span id="profile-initials">?</span></div>
+            <div>
+              <div id="profile-name" style="font-weight:700;font-size:1rem;"></div>
+              <div id="profile-role" style="font-size:.8125rem;color:var(--text-muted);margin-top:.125rem;"></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:1rem;">
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">Correo electrónico</label>
+              <div id="profile-email" style="padding:.625rem .875rem;background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius-md);font-size:.875rem;color:var(--text-muted);"></div>
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">País</label>
+              <input id="profile-country" class="form-input" type="text" placeholder="Ej: Argentina" />
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">Teléfono</label>
+              <input id="profile-phone" class="form-input" type="tel" placeholder="Ej: +54 9 11 1234-5678" />
+            </div>
+            <button id="btn-save-profile" class="btn btn-primary" style="margin-top:.5rem;">Guardar cambios</button>
+          </div>
+          <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border);">
+            <h4 style="font-size:.875rem;margin-bottom:.75rem;">Contactanos</h4>
+            <a href="mailto:soporte@cursossym.com" style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--accent);">soporte@cursossym.com</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal reseña -->
+<div id="modal-review" class="hidden" style="
+  position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,.7);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;padding:1rem;
+">
+  <div class="card" style="width:100%;max-width:480px;padding:2rem;">
+    <h3 style="margin-bottom:.375rem;">Dejar reseña</h3>
+    <p id="review-modal-course" style="font-size:.875rem;color:var(--text-muted);margin-bottom:1.5rem;"></p>
+    <div style="display:flex;gap:.25rem;margin-bottom:1.25rem;" id="star-rating">
+      <button class="star-btn" data-star="1">★</button>
+      <button class="star-btn" data-star="2">★</button>
+      <button class="star-btn" data-star="3">★</button>
+      <button class="star-btn" data-star="4">★</button>
+      <button class="star-btn" data-star="5">★</button>
+    </div>
+    <textarea id="review-comment" class="form-input" rows="3"
+      placeholder="Contá tu experiencia con el curso..."
+      style="resize:vertical;margin-bottom:1.25rem;"></textarea>
+    <div style="display:flex;gap:.75rem;justify-content:flex-end;">
+      <button id="btn-cancel-review" class="btn btn-ghost">Cancelar</button>
+      <button id="btn-submit-review" class="btn btn-primary">Publicar reseña</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal reembolso -->
+<div id="modal-refund" class="hidden" style="
+  position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,.7);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;padding:1rem;
+">
+  <div class="card" style="width:100%;max-width:440px;padding:2rem;">
+    <h3 style="margin-bottom:.5rem;">Solicitar reembolso</h3>
+    <p id="refund-modal-info" style="font-size:.875rem;color:var(--text-muted);margin-bottom:1.5rem;"></p>
+    <div style="background:var(--warning-dim);border:1px solid var(--warning);border-radius:var(--radius-md);padding:1rem;margin-bottom:1.5rem;font-size:.8125rem;color:var(--text-secondary);display:flex;align-items:flex-start;gap:.5rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:var(--warning);flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+      <span>Solo podés solicitar reembolso si consumiste menos del 50% del curso. El admin procesará tu solicitud.</span>
+    </div>
+    <div style="display:flex;gap:.75rem;justify-content:flex-end;">
+      <button id="btn-cancel-refund" class="btn btn-ghost">Cancelar</button>
+      <button id="btn-confirm-refund" class="btn btn-error">Confirmar solicitud</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="../../assets/js/app.js"></script>
+<script type="module" src="../../assets/js/dashboard-student.js"></script>
+
+<script type="module" src="../../assets/js/spa.js"></script>
+</body>
+</html>

@@ -1,0 +1,389 @@
+Conversation Summary
+Proyecto : Plataforma de cursos online "Cursos SyM" — marketplace educativo con roles Alumno/Profesor/Admin, desarrollado como proyecto escolar con HTML/CSS/Vanilla JS + Firebase
+
+Definición del proyecto : Se recopiló toda la información del proyecto (reglas de negocio, stack, diseño, flujos) y se crearon archivos de documentación base
+
+Estructura de documentación : Se crearon README.md, CONTEXTO.md, SCHEMA-BDD.md, ESTRUCTURA-APP.md en el nivel raíz
+
+Desarrollo de la app : Se crearon todos los archivos base de CSS, JS y páginas HTML hasta course-detail.html
+
+Estado actual : Se intentó crear course-player.html pero no se entregó ningún resultado — es la tarea pendiente
+
+Files and Code Summary
+README.md (raíz): Documentación principal — stack, roles, reglas de negocio, estructura de carpetas, setup
+
+CONTEXTO.md (raíz): Checklist de avance por etapa (9 etapas), decisiones pendientes, notas técnicas. Actualizable sesión a sesión
+
+SCHEMA-BDD.md (raíz): Esquema completo de colecciones Firestore: users, courses, modules, quiz, finalExam, enrollments, transactions, reviews, comments, forum, notifications, categories, tags
+
+ESTRUCTURA-APP.md (raíz): Árbol de archivos completo, flujos de usuario por rol, sistema de temas, guards de ruta, lógica de reembolso, split de pagos, variables CSS
+
+firebase/firebase-config.js: Inicializa Firebase con credenciales reales del proyecto plataforma-de-cursos-3ae42. Exporta auth y db
+
+assets/css/main.css: Variables CSS temas claro/oscuro, reset, tipografía Inter, layout con sidebar, scrollbar, toasts, cookie banner, loader
+
+assets/css/components.css: Sidebar, topbar, botones, bento grid (12 cols), tarjetas de curso, progress bar, efecto apilamiento, badges, formularios, modales, notificaciones, tabla, estrellas, toggle tema, chips de filtro
+
+assets/css/responsive.css: Breakpoints xl/lg/md/sm/xs, sidebar mobile drawer, grids adaptativos, auth layout, player layout, catalog layout
+
+assets/js/app.js: Init, toggle tema claro/oscuro con localStorage, logo dinámico ( logo-claro.png/ logo-oscuro.png), route guards por rol, sidebar mobile, toasts, cookie banner estricto, utilidades formatARS, formatDate, getInitials
+
+assets/js/auth.js: registerStudent, registerTeacherPending (rol temporal hasta pago), login (verifica suspensión), logout, resetPassword, redirectByRole, onSessionChange, bindLoginForm, bindRegisterForm, mensajes de error en español
+
+assets/js/db.js: CRUD completo para todas las colecciones Firestore — usuarios, cursos, módulos, quizzes, examen final, inscripciones, progreso, transacciones, reseñas, comentarios, foro, notificaciones, categorías, tags
+
+assets/js/notifications.js: initNotifications con onSnapshot, renderBadge, renderDropdown, bindNotifToggle, markAllNotificationsRead
+
+assets/js/storage.js: TEMPORAL — getYouTubeId, getYouTubeEmbedUrl, getYouTubeThumbnail, isValidYouTubeUrl, getDriveDirectLink, getDrivePreviewLink, renderYouTubePlayer
+
+assets/js/payments.js: TEMPORAL Mercado Pago Sandbox — loadMercadoPagoSDK, initMercadoPago, buildPreference, processMembershipPayment ($20.000 ARS), processCoursePayment (split 70/30), renderPaymentBrick, handlePaymentSuccess
+
+index.html: Landing + catálogo público — navbar con notificaciones, hero, filtros por categoría (chips), grid de cursos con skeletons, búsqueda en tiempo real, footer
+
+pages/auth/login.html: Formulario login, toggle password, recuperar contraseña inline, redirección por sesión activa
+
+pages/auth/register.html: Selector visual de rol (Alumno/Profesor), aviso membresía $20.000 ARS, indicador fuerza de contraseña 5 niveles, checkbox términos, pre-selección por query param ?role=teacher
+
+pages/checkout/checkout.html: Maneja ?type=membership y ?type=course&courseId=XXX, resumen lateral sticky, brick MP, curso gratis sin pago, validación de términos antes de mostrar brick
+
+pages/course/course-detail.html: Ficha pública del curso — breadcrumb, título, rating, profesor, video promo, descripción, outcomes, requisitos, temario colapsable por módulo, card de compra sticky, reseñas, verificación de inscripción existente
+
+Key Insights
+Stack : HTML5 + CSS3 + Vanilla JS puro, Firebase Auth + Firestore, YouTube embeds (temporal), Google Drive links (temporal), Mercado Pago Sandbox (temporal)
+
+Firebase : Proyecto plataforma-de-cursos-3ae42, credenciales reales ya integradas, reglas permisivas de desarrollo activas
+
+Reglas de negocio clave : Split 70/30 fijo, membresía profesor $20.000 ARS única, reembolso solo si progressPercent < 50%, quiz obligatorio para avanzar módulo, todo curso pasa por moderación admin, máx 15 módulos por curso
+
+Diseño : Modo oscuro default + claro con toggle, paleta negro/blanco/azul-cian neón ( #00d4ff), Bento Grid para dashboards, tarjetas con efecto apilamiento, tipografía Inter, logos dinámicos por tema
+
+Logos : img/logo-claro.png y img/logo-oscuro.png en raíz del proyecto (fuera de la carpeta app)
+
+Rutas : Todo el código de la app va dentro de plataforma cursos SyM/, documentación en el nivel raíz
+
+Módulos ES : Todos los JS usan type="module" con imports de Firebase CDN v10.12.2
+
+Pasarela de pago : Mercado Pago Sandbox temporal, credenciales reales pendientes de recibir del usuario
+
+Correos transaccionales : Pendiente, se implementa con pasarela definitiva
+
+Reglas Firestore : Actualmente permisivas (auth != null), se endurecen en Etapa 8
+
+Most Recent Topic
+Topic : Creación de course-player.html — player de consumo de contenido del curso
+
+Progress : El archivo NO fue creado. Hubo múltiples intentos fallidos donde el agente no entregó ningún output. Es el próximo archivo a crear.
+
+Lo que debe contener course-player.html:
+
+Guard: requiere sesión activa + enrollment válido para ese curso
+
+Layout: columna principal (video YouTube embed + texto de apoyo) + sidebar derecho (índice de módulos y clases con progreso)
+
+Flujo estricto: Clase (video + texto) → Quiz obligatorio al terminar módulo → desbloquea siguiente módulo
+
+Guardar progreso en Firestore: completeLesson, completeModule, saveQuizResult
+
+Comentarios por clase en tiempo real ( listenComments)
+
+Foro general del curso ( getForumPosts, addForumPost, addForumReply)
+
+Al completar todos los módulos → botón para ir a course-exam.html
+
+Tools Used :
+
+No se ejecutó ninguna herramienta para este archivo — es tarea pendiente inmediata
+
+Conversation history has been compacted successfully!
+
+-------------------------
+
+
+hola lee los archivos necesarios para tu contexto y sigue la sigueinte tarea
+Archivos creados hasta ahora:
+✅ firebase/firebase-config.js
+
+✅ assets/css/main.css
+
+✅ assets/css/components.css
+
+✅ assets/css/responsive.css
+
+✅ assets/js/app.js
+
+✅ assets/js/auth.js
+
+✅ assets/js/db.js
+
+✅ assets/js/notifications.js
+
+✅ assets/js/storage.js
+
+✅ assets/js/payments.js
+
+✅ index.html
+
+✅ pages/auth/login.html
+
+✅ pages/auth/register.html
+
+✅ pages/checkout/checkout.html
+
+✅ pages/course/course-detail.html
+
+Próximo archivo: pages/course/course-player.html
+
+hola lee los archivos del proyecto de contexto, estructura, readme y shema y actualiza lo q ya este hecho en la carpeta curso plataforma sym
+
+
+
+-----------------------------------------------------
+
+Lo que está listo para probar:
+
+Todo el código está funcional. Firebase ya tiene credenciales reales en firebase-config.js, Cloudinary tiene cloud name y upload preset configurados en storage.js, y Mercado Pago tiene sus keys en payments.js.
+
+Lo que falta ANTES de poder probar:
+
+1. Firestore Rules — sin esto ninguna operación de base de datos va a funcionar. Tenés que ir a Firebase Console → Firestore → Rules y pegar las reglas de firestore-rules.txt.
+
+2. Firestore Indexes — varias queries usan filtros compuestos (where + orderBy). Sin los índices vas a ver errores en consola. Tenés que crearlos en Firebase Console → Firestore → Indexes:
+
+courses: status ASC + createdAt DESC
+
+courses: category ASC + status ASC + createdAt DESC
+
+enrollments: studentId ASC + enrolledAt DESC
+
+notifications: userId ASC + createdAt DESC
+
+3. Cloudinary Upload Preset — el preset curso-sym tiene que existir en tu cuenta de Cloudinary y estar configurado como Unsigned (para que el upload desde el browser funcione sin backend).
+
+4. Un usuario Admin — no hay forma de crear un admin desde la UI. Tenés que ir a Firebase Console → Firestore → colección users → buscar tu usuario → cambiar role a "admin" manualmente.
+
+Lo que podés ignorar por ahora:
+
+Correos transaccionales → no están implementados, no rompe nada
+
+GitHub Pages deploy → podés probar abriendo los HTML directo en el browser o con Live Server en VS Code
+
+Orden recomendado para probar:
+
+Configurar Firestore Rules + Indexes
+
+Verificar Cloudinary preset unsigned
+
+Crear usuario admin manualmente en Firestore
+
+Registrar un alumno → comprar curso (sandbox MP)
+
+Registrar un profesor → pagar membresía → crear curso → enviarlo a moderación
+
+Con el admin → aprobar el curso
+
+--------------------------
+
+Cannot GET /pages/dashboard-student/index.html
+
+los formularios funcionan pero no estan bien conectado con la pag, las interfaces, el logo, todos los btns de volver, ingresar.
+
+revisa todo y arreglalo
+
+
+Context
+Primero leo los archivos HTML de auth para entender la estructura actual de rutas:
+
+3 files read
+login.html
+register.html
+index.html
+El problema es claro. Todas las rutas /img/..., /index.html, /pages/..., /legal/... en los HTML usan rutas absolutas. Con Live Server desde la carpeta plataforma cursos SyM, estas rutas funcionan. El problema es que los JS también tienen rutas absolutas en window.location.href y en los templates HTML generados dinámicamente.
+
+La solución más limpia es crear un helper de rutas en app.js y usarlo en todos los JS. Pero dado el volumen, la solución más rápida y efectiva es reemplazar todas las rutas absolutas en los JS por rutas relativas calculadas dinámicamente .
+
+Voy a crear un helper global y parchear todos los archivos de una vez:
+
+1 file read
+app.js
+La estrategia es agregar un helper r(path) en app.js que convierte rutas absolutas en relativas según la profundidad de la página actual, y usarlo en todos los JS. Voy a hacer todo de una vez:
+
+app.js
++9
+-0
+
+Undo
+Ahora actualizo el routeGuard y ROLE_HOME en app.js para usar r():
+
+app.js
++5
+-5
+
+Undo
+Ahora actualizo auth.js para importar y usar r():
+
+auth.js
++4
+-4
+
+Undo
+Ahora actualizo todos los JS que usan window.location.href con rutas absolutas:
+
+dashboard-student.js
++8
+-8
+
+Undo
+dashboard-teacher.js
++6
+-6
+
+Undo
+catalog.js
++3
+-3
+
+Undo
+course-player.js
++4
+-4
+
+Undo
+course-exam.js
++4
+-4
+
+Undo
+moderation.js
++5
+-5
+
+Undo
+admin-users.js
++4
+-4
+
+Undo
+admin-finances.js
++4
+-4
+
+Undo
+stats-teacher.js
++5
+-5
+
+Undo
+course-editor.js
++3
+-3
+
+
+Orden recomendado para probar:
+
+Configurar Firestore Rules + Indexes
+
+Verificar Cloudinary preset unsigned
+
+Crear usuario admin manualmente en Firestore
+
+Registrar un alumno → comprar curso (sandbox MP)
+
+Registrar un profesor → pagar membresía → crear curso → enviarlo a moderación
+
+Con el admin → aprobar el curso
+
+
+
+
+Sí exacto. En la app el registro es con email y contraseña.
+
+Entrá a tu app, abrí register.html y registrate con cualquier email y contraseña (mínimo 6 caracteres). Seleccioná el rol Alumno (que es el default).
+
+Después de registrarte:
+
+Vas a Firestore Console → colección users
+
+Buscás el documento con tu UID
+
+Cambiás role de "student" a "admin"
+
+Cerrás sesión en la app y volvés a entrar — ahora te va a redirigir al dashboard de admin
+
+-------------------------------------
+
+
+cd "c:\Users\sebas\Desktop\proyecto plataforma de cursos\plataforma cursos SyM"
+npm install
+npm start
+
+
+me meti a mercado pago depeloverps y encontre variso errores basicamente hay cuentas para vendedor, compradores etc
+
+pero lo mas importante es q mi cuenta no estaba validada ya q no complete las etapas de
+Datos de integración
+Encontrá toda la información y recursos útiles de la aplicación cursos sym.
+
+Etapas de integración: Checkout Pro
+0%
+
+1 tarea pendiente
+
+Configurar ambiente de desarrollo
+
+Comenzar
+Realizar integración
+Probar la integración
+Salir a producción
+
+voy a ir haciendo esto y nos vamos comunicando espera mirespuesta
+
+
+----------------------
+npm install mercadopago
+
+
+Abrí una terminal nueva y corré el servidor:
+
+npm start
+
+Copy
+Abrí otra terminal y corré ngrok:
+
+npx ngrok http 4000
+
+Copy
+ngrok te va a dar una URL pública tipo:
+
+https://abc123.ngrok-free.app
+
+Copy
+En el panel de MP Developers → tu app → Notificaciones Webhook, pegá:
+
+https://abc123.ngrok-free.app/api/webhook
+
+---
+https://jokingly-guru-outing.ngrok-free.dev
+----
+
+
+Sí, pero solo una vez por PC. El resumen es:
+
+En cualquier PC nueva:
+
+npm install — instala dependencias
+
+npm start — arranca el servidor
+
+npx ngrok http 4000 — expone el puerto (necesitás el mismo authtoken de ngrok)
+
+El authtoken de ngrok está atado a tu cuenta, no a la PC. Entonces en la PC de la escuela solo hacés:
+
+npx ngrok config add-authtoken TU_TOKEN
+npx ngrok http 4000
+
+
+
+TESTUSER1204367676900889243
+tvmEynBDRG
+
+gdfhgdthyftd@gmail.com

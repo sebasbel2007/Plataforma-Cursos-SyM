@@ -1,0 +1,6 @@
+# File: plataforma cursos SyM/.gitignore
+.env
+node_modules/
+.DS_Store
+Thumbs.db
+firebase-adminsdk.json

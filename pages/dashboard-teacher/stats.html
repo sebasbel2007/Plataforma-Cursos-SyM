@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<!-- File: plataforma cursos SyM/pages/dashboard-teacher/stats.html -->
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estadísticas — Cursos SyM</title>
+  <link rel="stylesheet" href="../../assets/css/main.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  <link rel="stylesheet" href="../../assets/css/responsive.css" />
+</head>
+<body>
+
+<div class="app-layout">
+
+  <div class="main-content">
+    <div class="page-content">
+
+      <h2 style="margin-bottom:2rem;">Estadísticas</h2>
+
+      <!-- Bento resumen -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem;">
+        <div class="card" style="padding:1.25rem;">
+          <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.375rem;">Ingresos totales (70%)</p>
+          <p id="stat-earnings" style="font-size:1.5rem;font-weight:800;">—</p>
+        </div>
+        <div class="card" style="padding:1.25rem;">
+          <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.375rem;">Ventas totales</p>
+          <p id="stat-sales" style="font-size:1.75rem;font-weight:800;">—</p>
+        </div>
+        <div class="card" style="padding:1.25rem;">
+          <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.375rem;">Alumnos totales</p>
+          <p id="stat-students" style="font-size:1.75rem;font-weight:800;">—</p>
+        </div>
+        <div class="card" style="padding:1.25rem;">
+          <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.375rem;">Cursos publicados</p>
+          <p id="stat-published" style="font-size:1.75rem;font-weight:800;">—</p>
+        </div>
+      </div>
+
+      <!-- Tabla por curso -->
+      <div class="card" style="padding:0;overflow:hidden;margin-bottom:2rem;">
+        <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);">
+          <h3 style="font-size:1rem;">Rendimiento por curso</h3>
+        </div>
+        <div id="courses-loading" style="display:flex;justify-content:center;padding:3rem;"><div class="loader-spinner"></div></div>
+        <div id="courses-table" class="hidden" style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:.875rem;">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border);color:var(--text-muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;">
+                <th style="padding:.75rem 1.25rem;text-align:left;font-weight:600;">Curso</th>
+                <th style="padding:.75rem 1rem;text-align:right;font-weight:600;">Alumnos</th>
+                <th style="padding:.75rem 1rem;text-align:right;font-weight:600;">Ingresos</th>
+                <th style="padding:.75rem 1rem;text-align:right;font-weight:600;">Rating</th>
+                <th style="padding:.75rem 1rem;text-align:center;font-weight:600;">Estado</th>
+              </tr>
+            </thead>
+            <tbody id="courses-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Transacciones recientes -->
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);">
+          <h3 style="font-size:1rem;">Transacciones recientes</h3>
+        </div>
+        <div id="tx-loading" style="display:flex;justify-content:center;padding:3rem;"><div class="loader-spinner"></div></div>
+        <div id="tx-table" class="hidden" style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:.875rem;">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border);color:var(--text-muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;">
+                <th style="padding:.75rem 1.25rem;text-align:left;font-weight:600;">Curso</th>
+                <th style="padding:.75rem 1rem;text-align:left;font-weight:600;">Fecha</th>
+                <th style="padding:.75rem 1rem;text-align:right;font-weight:600;">Total</th>
+                <th style="padding:.75rem 1rem;text-align:right;font-weight:600;">Tu parte (70%)</th>
+                <th style="padding:.75rem 1rem;text-align:center;font-weight:600;">Estado</th>
+              </tr>
+            </thead>
+            <tbody id="tx-tbody"></tbody>
+          </table>
+        </div>
+        <div id="tx-empty" class="hidden" style="padding:2rem;text-align:center;">
+          <p style="color:var(--text-muted);font-size:.875rem;">Sin transacciones todavía.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script type="module" src="../../assets/js/app.js"></script>
+<script type="module" src="../../assets/js/stats-teacher.js"></script>
+
+<script type="module" src="../../assets/js/spa.js"></script>
+</body>
+</html>

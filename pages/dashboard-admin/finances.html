@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<!-- File: plataforma cursos SyM/pages/dashboard-admin/finances.html -->
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finanzas — Cursos SyM</title>
+  <link rel="stylesheet" href="../../assets/css/main.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  <link rel="stylesheet" href="../../assets/css/responsive.css" />
+  <style>
+    /* Sidebar Navigation */
+    .sidebar-nav {
+      padding: .75rem 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: .875rem;
+      padding: .625rem 1rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: .875rem;
+      font-weight: 500;
+      border-radius: var(--radius-md);
+      margin: 0 .5rem;
+      transition: all .15s ease;
+    }
+    .sidebar-link:hover {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+    .sidebar-link.active {
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+    .sidebar-link-secondary {
+      color: var(--text-muted);
+      font-size: .8125rem;
+    }
+    .sidebar-icon {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+    }
+    .sidebar-text {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sidebar-badge {
+      background: var(--error);
+      color: #fff;
+      font-size: .625rem;
+      font-weight: 700;
+      padding: .125rem .5rem;
+      border-radius: 999px;
+      min-width: 20px;
+      text-align: center;
+    }
+    .sidebar-divider {
+      height: 1px;
+      background: var(--border);
+      margin: .5rem 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-layout">
+
+  <div class="main-content">
+    <div class="page-content">
+
+      <h2 style="margin-bottom:2rem;">Finanzas</h2>
+
+      <!-- Bento stats -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem;">
+        <div class="card" style="padding:1.25rem;">
+          <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.375rem;">Ingresos plataforma (30%)</p>
+          <p id="stat-platform" style="font-size:1.5rem;font-weight:800;">—</p>
+        </div>
+        <div class="card" style="padding:1.25rem;">
+          <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.375rem;">Pagado a profesores (70%)</p>
+          <p id="stat-teachers" style="font-size:1.5rem;font-weight:800;">—</p>
+        </div>
+        <div class="card" style="padding:1.25rem;">
+          <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.375rem;">Membresías cobradas</p>
+          <p id="stat-memberships" style="font-size:1.75rem;font-weight:800;">—</p>
+        </div>
+        <div class="card" style="padding:1.25rem;border-color:var(--warning);">
+          <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.375rem;">Reembolsos solicitados</p>
+          <p id="stat-refunds" style="font-size:1.75rem;font-weight:800;color:var(--warning);">—</p>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div style="border-bottom:1px solid var(--border);margin-bottom:1.5rem;display:flex;gap:.25rem;">
+        <button class="tab-btn active" data-tab="all" style="padding:.625rem 1.25rem;border:none;background:none;color:var(--accent);font-size:.875rem;font-weight:500;cursor:pointer;border-bottom:2px solid var(--accent);">Todas</button>
+        <button class="tab-btn" data-tab="refund" style="padding:.625rem 1.25rem;border:none;background:none;color:var(--text-muted);font-size:.875rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;">Reembolsos pendientes</button>
+      </div>
+
+      <div id="tx-loading" style="display:flex;justify-content:center;padding:4rem;"><div class="loader-spinner"></div></div>
+
+      <div class="card" style="padding:0;overflow:hidden;" id="tx-table-wrap">
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:.875rem;">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border);color:var(--text-muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;">
+                <th style="padding:.75rem 1.25rem;text-align:left;font-weight:600;">Tipo</th>
+                <th style="padding:.75rem 1rem;text-align:left;font-weight:600;">Alumno</th>
+                <th style="padding:.75rem 1rem;text-align:left;font-weight:600;">Fecha</th>
+                <th style="padding:.75rem 1rem;text-align:right;font-weight:600;">Total</th>
+                <th style="padding:.75rem 1rem;text-align:right;font-weight:600;">Plataforma</th>
+                <th style="padding:.75rem 1rem;text-align:right;font-weight:600;">Profesor</th>
+                <th style="padding:.75rem 1rem;text-align:center;font-weight:600;">Estado</th>
+                <th style="padding:.75rem 1rem;text-align:center;font-weight:600;">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="tx-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script type="module" src="../../assets/js/app.js"></script>
+<script type="module" src="../../assets/js/admin-utils.js"></script>
+<script type="module" src="../../assets/js/admin-finances.js"></script>
+<script type="module" src="../../assets/js/spa.js"></script>
+</body>
+</html>

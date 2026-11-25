@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<!-- File: plataforma cursos SyM/index.html -->
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0d0d0f" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Cursos SyM" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" href="/assets/img/icon-192.png" />
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js').catch(function (err) {
+          console.warn('Service Worker:', err);
+        });
+      });
+    }
+  </script>
+  <title>Cursos SyM — Aprendé lo que querés</title>
+  <meta name="description" content="Marketplace de cursos online. Comprá solo lo que necesitás aprender." />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/components.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+  <style>
+    /* ── Navbar compacta ── */
+    #navbar {
+      position: sticky; top: 0; z-index: 90;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1rem;
+      height: 52px;
+      display: flex; align-items: center; justify-content: space-between;
+      backdrop-filter: blur(8px);
+    }
+    .nav-right { display: flex; align-items: center; gap: .5rem; }
+
+    /* Búsqueda desktop */
+    .search-bar-desktop { width: 220px; }
+    @media (max-width: 767px) { .search-bar-desktop { display: none !important; } }
+
+    /* Búsqueda mobile — debajo del hero */
+    .search-mobile-wrap {
+      display: none;
+      padding: 0 1rem .75rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    @media (max-width: 767px) { .search-mobile-wrap { display: block; } }
+
+    /* "Mi panel" — oculto en mobile muy chico */
+    @media (max-width: 479px) { .nav-panel-btn { display: none !important; } }
+
+    /* ── Grid 2 columnas en mobile ── */
+    @media (max-width: 767px) {
+      .courses-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: .625rem !important;
+      }
+      .course-card-body { padding: .625rem !important; }
+      .course-card-title { font-size: .8125rem !important; line-height: 1.3; }
+      .course-card-teacher { font-size: .6875rem !important; }
+      .course-card-category { font-size: .625rem !important; }
+      .course-card-footer { flex-direction: column; gap: .25rem; align-items: flex-start; }
+      .course-card-price { font-size: .8125rem !important; }
+      .course-card-rating { font-size: .6875rem !important; }
+      .course-card-thumbnail { aspect-ratio: 4/3 !important; }
+      .course-card-thumbnail-placeholder { aspect-ratio: 4/3 !important; }
+    }
+
+    /* ── Hero compacto en mobile ── */
+    @media (max-width: 767px) {
+      .hero { padding: 1.75rem 1rem 1.25rem !important; }
+      .hero h1 { font-size: 1.375rem !important; }
+      .hero p { font-size: .875rem !important; margin-top: .5rem !important; }
+      .hero-btns { margin-top: 1rem !important; gap: .5rem !important; }
+      .hero-btns .btn { font-size: .8125rem; padding: .5rem 1rem; }
+    }
+
+    /* ── Filtros scroll horizontal ── */
+    .filter-chips {
+      display: flex;
+      gap: .5rem;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: .25rem;
+    }
+    .filter-chips::-webkit-scrollbar { display: none; }
+    .filter-chips .chip { flex-shrink: 0; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── Loader ─────────────────────────────────────────────── -->
+<div id="app-loader">
+  <div class="loader-spinner"></div>
+</div>
+
+<!-- ─── Cookie Banner ──────────────────────────────────────── -->
+<div id="cookie-banner" class="hidden">
+  <div class="cookie-box">
+    <h3>Usamos cookies 🍪</h3>
+    <p>
+      Esta plataforma utiliza cookies esenciales para funcionar correctamente,
+      gestionar tu sesión y recordar tus preferencias. Sin ellas, no podés usar
+      la plataforma.
+    </p>
+    <div class="cookie-actions">
+      <button id="cookie-reject" class="btn btn-ghost btn-sm">Rechazar</button>
+      <button id="cookie-accept" class="btn btn-primary btn-sm">Aceptar y continuar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Navbar ─────────────────────────────────────────────── -->
+<nav id="navbar">
+  <a href="./index.html" style="display:flex;align-items:center;text-decoration:none;flex-shrink:0;">
+    <img data-logo data-logo-base="." src="./img/logo-oscuro.png" alt="Cursos SyM" style="height:26px;width:auto;" />
+  </a>
+
+  <div class="nav-right">
+    <!-- Búsqueda — solo desktop -->
+    <div class="search-bar search-bar-desktop">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" id="search-input-desktop" placeholder="Buscar cursos..." />
+    </div>
+
+    <!-- Toggle tema — solo desktop -->
+    <div class="theme-toggle theme-toggle-desktop">
+      <span class="theme-toggle-option" data-value="dark"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg></span>
+      <span class="theme-toggle-option active" data-value="light"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg></span>
+    </div>
+
+    <!-- Auth / user -->
+    <div id="nav-auth" style="display:flex;gap:.375rem;">
+      <a href="./pages/auth/login.html" class="btn btn-ghost btn-sm">Ingresar</a>
+      <a href="./pages/auth/register.html" class="btn btn-primary btn-sm">Registrarse</a>
+    </div>
+
+    <div id="nav-user" class="hidden" style="display:flex;align-items:center;gap:.375rem;">
+      <div style="position:relative;">
+        <button class="notif-btn" id="notif-btn" style="width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span id="notif-badge" class="notif-badge hidden">0</span>
+        </button>
+        <div id="notif-dropdown" class="notif-dropdown hidden">
+          <div class="notif-dropdown-header">
+            <span>Notificaciones</span>
+            <button id="notif-mark-all" class="btn btn-ghost btn-sm" style="font-size:.75rem;">Marcar todas</button>
+          </div>
+          <div id="notif-list" class="notif-list"></div>
+        </div>
+      </div>
+      <a id="nav-dashboard-link" href="#" class="btn btn-secondary btn-sm nav-panel-btn">Mi panel</a>
+      <div class="user-avatar" id="nav-avatar" style="cursor:pointer;width:30px;height:30px;font-size:.75rem;" title="Cerrar sesión">
+        <span id="nav-initials">?</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ─── Hero ────────────────────────────────────────────────── -->
+<section class="hero">
+  <h1>Aprendé lo que querés,<br /><span class="text-accent">cuando querés.</span></h1>
+  <p style="margin-top:.75rem;font-size:1rem;max-width:520px;margin-inline:auto;">
+    Comprá solo los cursos que necesitás. Profesores reales, contenido práctico,
+    certificado al finalizar.
+  </p>
+  <div class="hero-btns" style="display:flex;gap:.75rem;justify-content:center;margin-top:1.5rem;flex-wrap:wrap;">
+    <a href="./pages/catalog/catalog.html" class="btn btn-primary">Ver todos los cursos</a>
+    <a href="./pages/auth/register.html?role=teacher" class="btn btn-secondary">Quiero enseñar</a>
+  </div>
+</section>
+
+<!-- ─── Búsqueda mobile ─────────────────────────────────────── -->
+<div class="search-mobile-wrap">
+  <div class="search-bar" style="width:100%;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input type="text" id="search-input" placeholder="Buscar cursos..." />
+  </div>
+</div>
+
+<!-- ─── Filtros de categoría ────────────────────────────────── -->
+<section style="padding:0 1rem .875rem;max-width:1400px;margin:0 auto;">
+  <div class="filter-chips" id="category-chips">
+    <span class="chip active" data-category="">Todos</span>
+  </div>
+</section>
+
+<!-- ─── Grid de cursos ──────────────────────────────────────── -->
+<main style="padding:0 1rem 4rem;max-width:1400px;margin:0 auto;">
+  <div id="courses-container" class="courses-grid">
+    <div class="course-card" style="pointer-events:none;"><div class="course-card-thumbnail-placeholder" style="animation:pulse 1.5s ease infinite;"></div><div class="course-card-body"><div style="height:10px;background:var(--border);border-radius:4px;width:40%;margin-bottom:.5rem;"></div><div style="height:14px;background:var(--border);border-radius:4px;margin-bottom:.375rem;"></div><div style="height:14px;background:var(--border);border-radius:4px;width:70%;"></div></div></div>
+    <div class="course-card" style="pointer-events:none;"><div class="course-card-thumbnail-placeholder" style="animation:pulse 1.5s ease infinite;"></div><div class="course-card-body"><div style="height:10px;background:var(--border);border-radius:4px;width:40%;margin-bottom:.5rem;"></div><div style="height:14px;background:var(--border);border-radius:4px;margin-bottom:.375rem;"></div><div style="height:14px;background:var(--border);border-radius:4px;width:70%;"></div></div></div>
+    <div class="course-card" style="pointer-events:none;"><div class="course-card-thumbnail-placeholder" style="animation:pulse 1.5s ease infinite;"></div><div class="course-card-body"><div style="height:10px;background:var(--border);border-radius:4px;width:40%;margin-bottom:.5rem;"></div><div style="height:14px;background:var(--border);border-radius:4px;margin-bottom:.375rem;"></div><div style="height:14px;background:var(--border);border-radius:4px;width:70%;"></div></div></div>
+    <div class="course-card" style="pointer-events:none;"><div class="course-card-thumbnail-placeholder" style="animation:pulse 1.5s ease infinite;"></div><div class="course-card-body"><div style="height:10px;background:var(--border);border-radius:4px;width:40%;margin-bottom:.5rem;"></div><div style="height:14px;background:var(--border);border-radius:4px;margin-bottom:.375rem;"></div><div style="height:14px;background:var(--border);border-radius:4px;width:70%;"></div></div></div>
+  </div>
+
+  <div id="courses-empty" class="empty-state hidden">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.966 8.966 0 0 0-6 2.292m0-14.25v14.25" />
+    </svg>
+    <p>No hay cursos en esta categoría todavía.</p>
+  </div>
+</main>
+
+<!-- ─── Footer ──────────────────────────────────────────────── -->
+<footer style="border-top:1px solid var(--border);padding:1.5rem 1rem;text-align:center;color:var(--text-muted);font-size:.8125rem;">
+  <p>© 2025 Cursos SyM — Todos los derechos reservados</p>
+  <div style="display:flex;gap:1.5rem;justify-content:center;margin-top:.75rem;flex-wrap:wrap;">
+    <a href="./legal/terms.html">Términos y condiciones</a>
+    <a href="./legal/privacy.html">Política de privacidad</a>
+  </div>
+</footer>
+
+<!-- ─── PANEL TEMPORAL DE ADMIN ── -->
+<div id="admin-panel" style="
+  position:fixed;bottom:1rem;left:1rem;z-index:9999;
+  background:var(--bg-card);border:2px solid var(--warning);
+  border-radius:var(--radius-lg);padding:1rem;width:280px;
+  font-size:.8125rem;
+">
+  <p style="color:var(--warning);font-weight:700;margin-bottom:.75rem;">🔧 Panel temporal</p>
+  <div id="admin-status" style="color:var(--text-muted);margin-bottom:.75rem;font-size:.75rem;">Cargando...</div>
+  <div style="display:flex;flex-direction:column;gap:.5rem;">
+    <button id="btn-fix-admin" class="btn btn-sm" style="background:var(--warning);color:#000;font-weight:700;">Crear doc admin (usuario actual)</button>
+    <button id="btn-fix-user" class="btn btn-sm btn-secondary">Crear doc usuario actual (student)</button>
+    <button id="btn-check" class="btn btn-sm btn-ghost">Verificar estado</button>
+  </div>
+  <div id="admin-log" style="margin-top:.75rem;font-size:.7rem;color:var(--text-muted);max-height:80px;overflow-y:auto;"></div>
+</div>
+
+<script type="module">
+  import { auth } from './firebase/firebase-config.js';
+  import { db } from './firebase/firebase-config.js';
+  import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+  import { doc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+  const statusEl = document.getElementById('admin-status');
+  const logEl    = document.getElementById('admin-log');
+
+  function log(msg) {
+    logEl.innerHTML += `<div>${msg}</div>`;
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  async function checkStatus() {
+    const user = auth.currentUser;
+    if (!user) { statusEl.textContent = 'Sin sesión activa'; return null; }
+    const snap = await getDoc(doc(db, 'users', user.uid));
+    if (snap.exists()) {
+      const d = snap.data();
+      statusEl.innerHTML = `Sesión: ${user.email}<br>Rol en Firestore: <strong>${d.role}</strong>`;
+    } else {
+      statusEl.innerHTML = `Sesión: ${user.email}<br><strong>Sin doc en Firestore</strong>`;
+    }
+    return user;
+  }
+
+  onAuthStateChanged(auth, () => checkStatus());
+  document.getElementById('btn-check').addEventListener('click', checkStatus);
+
+  document.getElementById('btn-fix-admin').addEventListener('click', async () => {
+    const user = auth.currentUser;
+    if (!user) { log('Iniciá sesión primero'); return; }
+    try {
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid, email: user.email,
+        displayName: user.displayName || 'Admin', photoURL: null,
+        role: 'admin', membershipStatus: 'none', membershipPaidAt: null,
+        suspended: false, suspendedReason: null, createdAt: serverTimestamp()
+      });
+      log('Doc admin creado'); checkStatus();
+    } catch(e) { log('Error: ' + e.message); }
+  });
+
+  document.getElementById('btn-fix-user').addEventListener('click', async () => {
+    const user = auth.currentUser;
+    if (!user) { log('Iniciá sesión primero'); return; }
+    try {
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid, email: user.email,
+        displayName: user.displayName || user.email, photoURL: null,
+        role: 'student', membershipStatus: 'none', membershipPaidAt: null,
+        suspended: false, suspendedReason: null, createdAt: serverTimestamp()
+      });
+      log('Doc student creado'); checkStatus();
+    } catch(e) { log('Error: ' + e.message); }
+  });
+</script>
+
+<script type="module">
+  import { initNotifications, bindNotifToggle } from './assets/js/notifications.js';
+  import { onSessionChange, logout, showToast, formatARS, getInitials } from './assets/js/app.js';
+  import { getPublishedCourses, getCategories } from './assets/js/db.js';
+  import { getCourseThumbnail } from './assets/js/storage.js';
+
+  let allCourses = [];
+  let activeCategory = '';
+
+  // ─── Sesión ────────────────────────────────────────────────
+  onSessionChange((session) => {
+    const navAuth = document.getElementById('nav-auth');
+    const navUser = document.getElementById('nav-user');
+
+    if (session?.userData) {
+      navAuth.classList.add('hidden');
+      navUser.classList.remove('hidden');
+      document.getElementById('nav-initials').textContent =
+        getInitials(session.userData.displayName || session.user.email);
+      const homes = {
+        student:   './pages/dashboard-student/index.html',
+        teacher:   './pages/dashboard-teacher/index.html',
+        admin:     './pages/dashboard-admin/index.html',
+        sub_admin: './pages/dashboard-admin/index.html'
+      };
+      document.getElementById('nav-dashboard-link').href = homes[session.userData.role] || '#';
+      const dashHref = homes[session.userData.role] || '#';
+      document.getElementById('nav-avatar').addEventListener('click', () => {
+        window.location.href = dashHref;
+      });
+      initNotifications(session.user.uid);
+      bindNotifToggle(session.user.uid);
+    } else {
+      navAuth.classList.remove('hidden');
+      navUser.classList.add('hidden');
+    }
+  });
+
+  // ─── Categorías ────────────────────────────────────────────
+  async function loadCategories() {
+    const categories = await getCategories();
+    const chips = document.getElementById('category-chips');
+    categories.forEach(cat => {
+      const chip = document.createElement('span');
+      chip.className = 'chip';
+      chip.dataset.category = cat.slug;
+      chip.textContent = cat.name;
+      chips.appendChild(chip);
+    });
+    chips.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        activeCategory = chip.dataset.category;
+        filterCourses();
+      });
+    });
+  }
+
+  // ─── Cursos ────────────────────────────────────────────────
+  async function loadCourses() {
+    allCourses = await getPublishedCourses();
+    renderCourses(allCourses);
+  }
+
+  function filterCourses() {
+    // Unifica búsqueda mobile y desktop
+    const searchMobile  = document.getElementById('search-input')?.value.toLowerCase().trim() || '';
+    const searchDesktop = document.getElementById('search-input-desktop')?.value.toLowerCase().trim() || '';
+    const search = searchMobile || searchDesktop;
+    let filtered = allCourses;
+    if (activeCategory) filtered = filtered.filter(c => c.category === activeCategory);
+    if (search) filtered = filtered.filter(c =>
+      c.title.toLowerCase().includes(search) ||
+      c.teacherName.toLowerCase().includes(search) ||
+      c.tags?.some(t => t.toLowerCase().includes(search))
+    );
+    renderCourses(filtered);
+  }
+
+  function renderCourses(courses) {
+    const container = document.getElementById('courses-container');
+    const empty     = document.getElementById('courses-empty');
+    if (!courses.length) {
+      container.innerHTML = '';
+      empty.classList.remove('hidden');
+      return;
+    }
+    empty.classList.add('hidden');
+    container.innerHTML = courses.map(course => {
+      const thumb = getCourseThumbnail(course) || '';
+      const price = course.isFree
+        ? '<span class="course-card-price free">Gratis</span>'
+        : `<span class="course-card-price">${formatARS(course.price)}</span>`;
+      const stars = '★'.repeat(Math.round(course.rating || 0)) +
+                    '☆'.repeat(5 - Math.round(course.rating || 0));
+      return `
+        <div class="course-card" onclick="location.href='./pages/course/course-detail.html?id=${course.courseId}'">
+          ${thumb
+            ? `<img class="course-card-thumbnail" src="${thumb}" alt="${course.title}" loading="lazy" />`
+            : `<div class="course-card-thumbnail-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.069A1 1 0 0 1 21 8.82v6.36a1 1 0 0 1-1.447.894L15 14M3 8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8z"/>
+                </svg>
+              </div>`
+          }
+          <div class="course-card-body">
+            <div class="course-card-category">${course.category || 'General'}</div>
+            <div class="course-card-title">${course.title}</div>
+            <div class="course-card-teacher">por ${course.teacherName}</div>
+            <div class="course-card-footer">
+              ${price}
+              <div class="course-card-rating">
+                <span style="color:var(--warning);">${stars}</span>
+                <span style="color:var(--text-muted);margin-left:.2rem;">(${course.totalRatings || 0})</span>
+              </div>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // ─── Búsqueda (mobile + desktop) ──────────────────────────
+  document.getElementById('search-input')?.addEventListener('input', filterCourses);
+  document.getElementById('search-input-desktop')?.addEventListener('input', filterCourses);
+
+  // ─── Init ──────────────────────────────────────────────────
+  await loadCategories();
+  await loadCourses();
+</script>
+
+</body>
+</html>

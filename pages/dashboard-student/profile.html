@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<!-- File: plataforma cursos SyM/pages/dashboard-student/profile.html -->
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi perfil — Cursos SyM</title>
+  <link rel="stylesheet" href="../../assets/css/main.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  <link rel="stylesheet" href="../../assets/css/responsive.css" />
+</head>
+<body>
+
+<div class="app-layout">
+  <div class="main-content">
+    <div class="page-content" style="max-width:520px;">
+
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem;">
+        <a href="index.html" class="btn btn-ghost btn-sm" style="padding:.375rem;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        </a>
+        <h2 style="font-size:1.0625rem;font-weight:700;margin:0;">Mi perfil</h2>
+      </div>
+
+      <div class="card" style="padding:1.5rem;">
+        <!-- Avatar + nombre -->
+        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+          <div class="user-avatar" style="width:56px;height:56px;font-size:1.25rem;flex-shrink:0;">
+            <span id="profile-initials">?</span>
+          </div>
+          <div>
+            <div id="profile-name" style="font-weight:700;font-size:1rem;"></div>
+            <div id="profile-role" style="font-size:.8125rem;color:var(--text-muted);margin-top:.125rem;"></div>
+          </div>
+        </div>
+
+        <!-- Campos -->
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <div class="form-group" style="margin:0;">
+            <label class="form-label">Correo electrónico</label>
+            <div id="profile-email" style="padding:.625rem .875rem;background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius-md);font-size:.875rem;color:var(--text-muted);"></div>
+          </div>
+          <div class="form-group" style="margin:0;">
+            <label class="form-label">País</label>
+            <input id="profile-country" class="form-input" type="text" placeholder="Ej: Argentina" />
+          </div>
+          <div class="form-group" style="margin:0;">
+            <label class="form-label">Teléfono</label>
+            <input id="profile-phone" class="form-input" type="tel" placeholder="Ej: +54 9 11 1234-5678" />
+          </div>
+          <button id="btn-save-profile" class="btn btn-primary" style="margin-top:.25rem;">Guardar cambios</button>
+        </div>
+
+        <!-- Contacto -->
+        <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border);">
+          <h4 style="font-size:.875rem;margin-bottom:.75rem;">Contactanos</h4>
+          <a href="mailto:soporte@cursossym.com" style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--accent);">soporte@cursossym.com</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script type="module" src="../../assets/js/app.js"></script>
+<script type="module" src="../../assets/js/spa.js"></script>
+<script type="module">
+import { requireRole, showToast, getInitials } from '../../assets/js/app.js';
+import { updateUserData } from '../../assets/js/db.js';
+import { renderDashboardSidebar } from '../../assets/js/chrome.js';
+
+requireRole('student').then(({ userData }) => {
+  renderDashboardSidebar('student', 'profile');
+
+  const el = (id) => document.getElementById(id);
+  const name = userData.displayName || userData.email || '';
+  const roleMap = { student: 'Alumno', teacher: 'Profesor', admin: 'Administrador' };
+
+  if (el('profile-initials')) el('profile-initials').textContent = getInitials(name);
+  if (el('profile-name'))     el('profile-name').textContent     = name;
+  if (el('profile-role'))     el('profile-role').textContent     = roleMap[userData.role] || userData.role;
+  if (el('profile-email'))    el('profile-email').textContent    = userData.email || '';
+  if (userData.country && el('profile-country')) el('profile-country').value = userData.country;
+  if (userData.phone   && el('profile-phone'))   el('profile-phone').value   = userData.phone;
+
+  // Sidebar user
+  const sName = document.getElementById('sidebar-name');
+  const sInit = document.getElementById('sidebar-initials');
+  if (sName) sName.textContent = name;
+  if (sInit) sInit.textContent = getInitials(name);
+
+  // Logout
+  document.getElementById('btn-logout')?.addEventListener('click', async () => {
+    const { logout } = await import('../../assets/js/app.js');
+    await logout();
+    window.location.href = '../../index.html';
+  });
+
+  el('btn-save-profile')?.addEventListener('click', async () => {
+    const btn = el('btn-save-profile');
+    const country = el('profile-country')?.value.trim() || '';
+    const phone   = el('profile-phone')?.value.trim()   || '';
+    btn.disabled = true;
+    try {
+      await updateUserData(userData.uid, { country, phone });
+      showToast('Perfil actualizado.', 'success');
+    } catch {
+      showToast('Error al guardar.', 'error');
+    } finally {
+      btn.disabled = false;
+    }
+  });
+});
+</script>
+</body>
+</html>
